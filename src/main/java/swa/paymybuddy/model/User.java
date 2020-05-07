@@ -1,5 +1,6 @@
 package swa.paymybuddy.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,7 +13,11 @@ public class User {
 	@GeneratedValue(strategy=GenerationType.SEQUENCE) 
 	private Integer id;
 	
+	@Column(length = 30)
 	private String email;
+	
+	@Column(columnDefinition = "TINYINT")
+	private Integer social_network;
 	
 	private User() {
 	}
