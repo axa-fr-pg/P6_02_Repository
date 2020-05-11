@@ -15,17 +15,20 @@ public class Runner implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(Runner.class);
 
 	@Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
+	
+//	@Autowired
+//	SecurityService security;
 	
     @Override
     public void run(String[] args) throws Exception {
-    	
-        repository.deleteAll();
+    	    	
+        userRepository.deleteAll();
 
-        repository.save(new User("User A"));
-        repository.save(new User("User B"));
+        userRepository.save(new User("UserA", "$2y$10$Tizt8PWuzXwth.UGEU2PHewSaJP4PjCXxygL3SgCpdmgVHQy/DZX6")); //PassA
+        userRepository.save(new User("UserB", "$2y$10$w6WCcjlYZLJI9MmDNZN.HuAS9/vIm/SoRghEI5ia6UKKfO7.4r04C")); //PassB
 
-        repository.findAll().forEach((user) -> {
+        userRepository.findAll().forEach((user) -> {
             logger.info("{}", user.getEmail());
         });
     }
