@@ -23,13 +23,15 @@ public class User {
 
 	@Column(columnDefinition = "TINYINT")
 	private Integer social_network;
-		
+	
 	private User() {
+		// Required for JPA thus private
 	}
 
-	public User(String email, String password) {
+	public User(String email, String password, Integer socialNetwork) {
 		this.email = email;
 		this.password = password;
+		social_network = socialNetwork;
 	}
 
 	public User(Integer id) {
