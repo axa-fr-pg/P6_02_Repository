@@ -34,11 +34,10 @@ public class UserControllerIT {
 	private String passwordCrypted = "$2y$10$Tbpujg3N8c91uCfOBMLw/eoEVfJp9hqV1.9qcbZZWxgYjuX1Zv9.G";
 
 	@BeforeEach
-	public void setup() {
-		mvc = MockMvcBuilders
-				.webAppContextSetup(context)
-				.apply(springSecurity())
-				.build();
+	public void setup() 
+	{
+		userRepository.deleteAll();
+		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 	}
 	
 	@Test

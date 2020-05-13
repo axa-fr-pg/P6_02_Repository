@@ -37,7 +37,7 @@ public class User {
 	@Column(columnDefinition = "TINYINT", nullable = true)
 	int type; 
 	
-	@Column(length = 30, nullable = false)
+	@Column(length = 30, nullable = false, unique = true)
 	String email;
 
 	@Column(length = 60, nullable = false)
