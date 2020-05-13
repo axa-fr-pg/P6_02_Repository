@@ -28,14 +28,15 @@ public class Runner implements CommandLineRunner {
     @Override
     public void run(String[] args) throws Exception {
     	    	
+        transferRepository.deleteAll();		
+        linkRepository.deleteAll();
         userRepository.deleteAll();
+        
         User u1 = userRepository.save(new User(0, "UserA", "$2y$10$Tizt8PWuzXwth.UGEU2PHewSaJP4PjCXxygL3SgCpdmgVHQy/DZX6")); //PassA
         User u2 = userRepository.save(new User(0, "UserB", "$2y$10$w6WCcjlYZLJI9MmDNZN.HuAS9/vIm/SoRghEI5ia6UKKfO7.4r04C")); //PassB
         
-        linkRepository.deleteAll();
         linkRepository.save(new Link(u1, u2));
         		
-        transferRepository.deleteAll();		
         transferRepository.save(new Transfer(u1, u2, 0, "my personal transfer comment"));
 
     }

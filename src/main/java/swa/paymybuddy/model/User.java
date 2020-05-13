@@ -1,9 +1,12 @@
 package swa.paymybuddy.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 import lombok.Getter;
@@ -42,7 +45,7 @@ public class User {
 
 	@Column(columnDefinition = "TINYINT", nullable = true)
 	boolean permanent;
-
+	
 	public User( int type, String email, String password ) {
 		this.type = type;
 		this.email = email;

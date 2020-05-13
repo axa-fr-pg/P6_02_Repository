@@ -3,6 +3,7 @@ package swa.paymybuddy.model;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import lombok.AccessLevel;
@@ -23,7 +24,7 @@ public class Link {
 
 	@Id
 	@ManyToOne
-    User userCredit;
+	User userCredit;
 	
 	@Id
 	@ManyToOne
