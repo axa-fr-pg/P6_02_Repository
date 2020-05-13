@@ -33,7 +33,7 @@ public class UserController {
 	@PostMapping("/register")
 	public ResponseEntity<String> registerNewUser(@RequestParam String email, @RequestParam String password) {
 		logger.info("POST new user" + email);
-		User u = new User(0, email, password);
+		User u = new User(1, 0, email, password, false);
 		if (userRepository.save(u) == null) return null;
 		return new ResponseEntity<String>(email + " has been registered successfully", HttpStatus.CREATED);
 	}

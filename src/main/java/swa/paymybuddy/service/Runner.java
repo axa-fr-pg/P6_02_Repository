@@ -32,12 +32,13 @@ public class Runner implements CommandLineRunner {
         linkRepository.deleteAll();
         userRepository.deleteAll();
         
-        User u1 = userRepository.save(new User(0, "UserA", "$2y$10$Tizt8PWuzXwth.UGEU2PHewSaJP4PjCXxygL3SgCpdmgVHQy/DZX6")); //PassA
-        User u2 = userRepository.save(new User(0, "UserB", "$2y$10$w6WCcjlYZLJI9MmDNZN.HuAS9/vIm/SoRghEI5ia6UKKfO7.4r04C")); //PassB
+        User u1 = userRepository.save(new User(1, 0, "UserA", 
+        		"$2y$10$Tizt8PWuzXwth.UGEU2PHewSaJP4PjCXxygL3SgCpdmgVHQy/DZX6", false)); //PassA
+        User u2 = userRepository.save(new User(2, 0, "UserB", 
+        		"$2y$10$w6WCcjlYZLJI9MmDNZN.HuAS9/vIm/SoRghEI5ia6UKKfO7.4r04C", true)); //PassB
         
-        linkRepository.save(new Link(u1, u2));
-        		
-        transferRepository.save(new Transfer(u1, u2, 0, "my personal transfer comment"));
+        Link l1to2 = linkRepository.save(new Link(u1, u2));
 
+//        transferRepository.save(new Transfer(l1to2, 1, "my personal transfer comment"));
     }
 }

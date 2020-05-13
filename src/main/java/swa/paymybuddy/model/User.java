@@ -45,10 +45,4 @@ public class User {
 
 	@Column(columnDefinition = "TINYINT", nullable = true)
 	boolean permanent;
-	
-	public User( int type, String email, String password ) {
-		this.type = type;
-		this.email = email;
-		this.password = password;
-	}
 }

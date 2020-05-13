@@ -28,16 +28,16 @@ public class Transfer {
 
 	@Id
 	@ManyToOne
-    User userCredit;
+	Account accountCredit;
 	
 	@Id
 	@ManyToOne
-    User userDebit;
+	Account accountDebit;
 	
 	@Id
 	@GeneratedValue(generator="transferSequence") 
 	int transferId;
 
 	@Column(length = 100, nullable = false)
-	String email;
+	String description;
 }
