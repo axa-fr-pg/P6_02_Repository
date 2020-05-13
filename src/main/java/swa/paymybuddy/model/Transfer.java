@@ -1,6 +1,9 @@
 package swa.paymybuddy.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
@@ -18,8 +21,8 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(LinkId.class)
-public class Link {
+@IdClass(TransferId.class)
+public class Transfer {
 
 	@Id
 	@ManyToOne
@@ -28,4 +31,11 @@ public class Link {
 	@Id
 	@ManyToOne
     User userDebit;
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.SEQUENCE) 
+	Integer transferId;
+
+	@Column(length = 100, nullable = false)
+	String email;
 }
