@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.UserRepository;
+import swa.paymybuddy.service.UserService;
 
 @RestController
 @RequestMapping("")
@@ -23,8 +24,8 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
-	private UserRepository userRepository;
-    
+	private UserService userService;
+
     @GetMapping("/register")
     public ModelAndView redirectWithUsingRedirectPrefix(ModelMap model) {
         return new ModelAndView("redirect:/register.html", model);
@@ -32,10 +33,9 @@ public class UserController {
     
 	@PostMapping("/register")
 	public ResponseEntity<String> registerNewUser(@RequestParam String email, @RequestParam String password) {
-		logger.info("POST new user" + email);
-		User u = new User(1, 0, email, password, false);
-		if (userRepository.save(u) == null) return null;
-		return new ResponseEntity<String>(email + " has been registered successfully", HttpStatus.CREATED);
+		logger.info("Registering new user" + email);
+		userService.registerUserInternal(email, password, false);
+		return new ResponseEntity<String>(email + " profile has been created successfully", HttpStatus.CREATED);
 	}
 	
 }

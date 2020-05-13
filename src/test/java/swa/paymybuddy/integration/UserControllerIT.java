@@ -20,7 +20,7 @@ import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.UserRepository;
 
 @SpringBootTest
-public class UserManagementIT {
+public class UserControllerIT {
 
 	@Autowired
 	private WebApplicationContext context;
@@ -75,5 +75,5 @@ public class UserManagementIT {
 		        .accept(MediaType.APPLICATION_FORM_URLENCODED))
 		        .andExpect(status().isCreated());
 	}
-
+	
 }
