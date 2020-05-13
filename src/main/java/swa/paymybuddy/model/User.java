@@ -3,7 +3,6 @@ package swa.paymybuddy.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
@@ -20,17 +19,20 @@ import lombok.AllArgsConstructor;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SequenceGenerator(name="user_sequence", initialValue=1)
+@SequenceGenerator(name="userSequence", sequenceName="user_sequence")
 public class User {
 	
 	public static final String ROLE_APP_USER = "ROLE_APP_USER";
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE) 
-	Integer id;
+	@GeneratedValue(generator="userSequence") 
+	int id;
 	
+	// User type :
+	// 0 = native application user
+	// other = specific code per social network
 	@Column(columnDefinition = "TINYINT", nullable = true)
-	Integer type; 
+	int type; 
 	
 	@Column(length = 30, nullable = false)
 	String email;

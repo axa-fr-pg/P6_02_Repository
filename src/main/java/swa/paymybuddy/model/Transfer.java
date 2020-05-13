@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(TransferId.class)
+@SequenceGenerator(name="transferSequence", sequenceName="transfer_sequence")
 public class Transfer {
 
 	@Id
@@ -33,8 +35,8 @@ public class Transfer {
     User userDebit;
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE) 
-	Integer transferId;
+	@GeneratedValue(generator="transferSequence") 
+	int transferId;
 
 	@Column(length = 100, nullable = false)
 	String email;

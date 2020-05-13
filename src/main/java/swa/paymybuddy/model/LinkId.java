@@ -4,6 +4,6 @@ import java.io.Serializable;
 
 public class LinkId implements Serializable {
 
-	Integer userCredit;
-	Integer userDebit;
+	int userCredit;
+	int userDebit;
 }

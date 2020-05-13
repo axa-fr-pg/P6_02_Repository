@@ -13,12 +13,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-public class LinkRepositoryTest {
+public class AccountRepositoryTest {
 
-	  @Autowired private LinkRepository linkRepository;
+	  @Autowired private AccountRepository accountRepository;
 	  
 	  @Test
 	  void injectedRepositoryIsNotNull(){
-	    assertThat(linkRepository).isNotNull();
+	    assertThat(accountRepository).isNotNull();
 	  }	  
 }

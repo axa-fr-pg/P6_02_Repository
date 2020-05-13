@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class TransferId implements Serializable {
 
-	Integer userCredit;
-	Integer userDebit;
-	Integer transferId;
+	int userCredit;
+	int userDebit;
+	int transferId;
 }
