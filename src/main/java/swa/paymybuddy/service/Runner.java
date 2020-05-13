@@ -22,8 +22,8 @@ public class Runner implements CommandLineRunner {
     	    	
         userRepository.deleteAll();
 
-        userRepository.save(new User("UserA", "$2y$10$Tizt8PWuzXwth.UGEU2PHewSaJP4PjCXxygL3SgCpdmgVHQy/DZX6", 0)); //PassA
-        userRepository.save(new User("UserB", "$2y$10$w6WCcjlYZLJI9MmDNZN.HuAS9/vIm/SoRghEI5ia6UKKfO7.4r04C", 0)); //PassB
+        userRepository.save(new User(0, "UserA", "$2y$10$Tizt8PWuzXwth.UGEU2PHewSaJP4PjCXxygL3SgCpdmgVHQy/DZX6")); //PassA
+        userRepository.save(new User(0, "UserB", "$2y$10$w6WCcjlYZLJI9MmDNZN.HuAS9/vIm/SoRghEI5ia6UKKfO7.4r04C")); //PassB
 
         userRepository.findAll().forEach((user) -> {
             logger.info("{}", user.getEmail());

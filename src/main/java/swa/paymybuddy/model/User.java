@@ -7,36 +7,40 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
+import lombok.AccessLevel;
 
 @Entity
+@FieldDefaults(level=AccessLevel.PRIVATE)
 @Getter
 @Setter
+@NoArgsConstructor
 public class User {
 	
 	public static final String ROLE_APP_USER = "ROLE_APP_USER";
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE) 
-	private Integer id;
+	int id;
 	
-	@Column(length = 30)
-	private String email;
-
-	@Column(length = 60)
-	private String password;
-
-	@Column(columnDefinition = "TINYINT")
-	private Integer social_network;
+	@Column(columnDefinition = "TINYINT", nullable = true)
+	int type; 
 	
-	private User() {
-		// Required for JPA thus private
-	}
+	@Column(length = 30, nullable = false)
+	String email;
 
-	public User(String email, String password, Integer socialNetwork) {
+	@Column(length = 60, nullable = false)
+	String password;
+
+	@Column(columnDefinition = "TINYINT", nullable = true)
+	boolean permanent;
+
+	public User( Integer type, String email, String password ) {
+		this.type = type;
 		this.email = email;
 		this.password = password;
-		social_network = socialNetwork;
 	}
 
 }
