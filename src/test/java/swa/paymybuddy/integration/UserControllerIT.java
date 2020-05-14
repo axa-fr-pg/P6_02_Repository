@@ -45,7 +45,7 @@ public class UserControllerIT {
 	{
 		// GIVEN
 		String email = "email_1";
-		userRepository.save(new User(1, 0, email, passwordCrypted, false));
+		userRepository.save(new User(1, 0, email, passwordCrypted));
 		// WHEN & THEN
 		mvc.perform(formLogin("/login").user(email).password(passwordClear)).andExpect(authenticated());
 	}
@@ -55,7 +55,7 @@ public class UserControllerIT {
 	{
 		// GIVEN
 		String email = "email_2";
-		userRepository.save(new User(2, 0, email, "wrong", false));
+		userRepository.save(new User(2, 0, email, "wrong"));
 		// WHEN & THEN
 		mvc.perform(formLogin("/login").user(email).password(passwordClear)).andExpect(unauthenticated());
 	}

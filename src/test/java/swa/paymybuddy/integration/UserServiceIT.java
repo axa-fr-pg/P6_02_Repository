@@ -43,7 +43,7 @@ public class UserServiceIT {
 		// GIVEN
 		String email = "email_1";
 		// WHEN
-		User user = userService.registerUserInternal(email, passwordClear, true);
+		User user = userService.registerUserInternal(email, passwordClear);
 		// THEN
 		assertTrue(bCryptPasswordEncoder.matches(passwordClear, user.getPassword()));
 	}
@@ -54,10 +54,10 @@ public class UserServiceIT {
 		// GIVEN
 		String email = "email_2";
 		// WHEN
-		userService.registerUserInternal(email, passwordClear, true);
+		userService.registerUserInternal(email, passwordClear);
 		// THEN
 	    assertThrows(DataIntegrityViolationException.class, () -> 
-	    	userService.registerUserInternal(email, passwordClear, true));
+	    	userService.registerUserInternal(email, passwordClear));
 	}
 
 }

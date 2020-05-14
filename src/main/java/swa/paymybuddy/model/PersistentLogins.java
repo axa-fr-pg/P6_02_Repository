@@ -1,9 +1,12 @@
 package swa.paymybuddy.model;
 
+import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,14 +21,18 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(LinkId.class)
-public class Link {
+public class PersistentLogins {
 
 	@Id
-	@ManyToOne
-	User userCredit;
-	
-	@Id
-	@ManyToOne
-    User userDebit;
+	@Column(length = 64)
+	String series;
+
+	@Column(length = 30) // LIEN POSSIBLE ?
+	String username;
+
+	@Column(length = 64)
+	String token;
+
+	@Temporal(TemporalType.TIMESTAMP)
+    Date lastUsed;
 }

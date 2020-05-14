@@ -1,4 +1,4 @@
-package swa.paymybuddy.service;
+package swa.paymybuddy.security;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import swa.paymybuddy.model.User;
+import swa.paymybuddy.service.UserService;
 
 @Service
 public class UserSecurityDetails implements UserDetailsService {

@@ -6,8 +6,7 @@ public interface UserService {
 	
 	User getUserByEmail(String email);
 	
-	User registerUserInternal(String email, String password, boolean permanent);
+	User registerUserInternal(String email, String password);
 
-	User registerUserSocialNetwork(int networkCode, String email, String password, boolean permanent);
-
+	User registerUserSocialNetwork(int networkCode, String email, String password);
 }

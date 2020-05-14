@@ -25,16 +25,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User registerUserInternal(String email, String password, boolean permanent) 
+	public User registerUserInternal(String email, String password) 
 	{	
-	    User user = new User(0, 0, email, bCryptPasswordEncoder.encode(password), permanent);
+	    User user = new User(0, 0, email, bCryptPasswordEncoder.encode(password));
 	    return userRepository.save(user);
 	}
 
 	@Override
-	public User registerUserSocialNetwork(int networkCode, String email, String password, boolean permanent) 
+	public User registerUserSocialNetwork(int networkCode, String email, String password) 
 	{	
-	    User user = new User(0, networkCode, email, bCryptPasswordEncoder.encode(password), permanent);
+	    User user = new User(0, networkCode, email, bCryptPasswordEncoder.encode(password));
 	    return userRepository.save(user);
 	}
 	
