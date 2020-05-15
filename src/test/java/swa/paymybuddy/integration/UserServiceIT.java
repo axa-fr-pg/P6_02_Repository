@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import swa.paymybuddy.model.User;
+import swa.paymybuddy.repository.PersistentLoginsRepository;
 import swa.paymybuddy.repository.UserRepository;
 import swa.paymybuddy.service.UserService;
 
@@ -24,7 +25,7 @@ public class UserServiceIT {
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
+	
 	@Autowired
     private UserRepository userRepository;
 

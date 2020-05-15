@@ -42,8 +42,8 @@ public class UserControllerIT {
 	@BeforeEach
 	public void setup() 
 	{
-		userRepository.deleteAll();
 		persistentLoginsRepository.deleteAll();
+		userRepository.deleteAll();
 		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 	}
 	

@@ -5,11 +5,16 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.NaturalId;
+
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,14 +25,17 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(indexes = { @Index(name = "username_index", columnList = "username") })
 public class PersistentLogins {
 
 	@Id
 	@Column(length = 64)
 	String series;
 
-	@Column(length = 30) // LIEN POSSIBLE ?
-	String username;
+	@ManyToOne
+    @JoinColumn(name = "username", referencedColumnName = "email")
+	@NaturalId
+	User username;
 
 	@Column(length = 64)
 	String token;
@@ -35,7 +43,7 @@ public class PersistentLogins {
 	@Temporal(TemporalType.TIMESTAMP)
     Date lastUsed;
 	
-	PersistentLogins(String s, String u, String t, Date l) {
+	PersistentLogins(String s, User u, String t, Date l) {
 		series = s;
 		username = u;
 		token = t;
