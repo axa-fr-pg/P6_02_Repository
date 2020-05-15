@@ -44,4 +44,9 @@ public class User implements Serializable {
 
 	@Column(length = 60, nullable = false)
 	String password;
+	
+	public User(int knownId)
+	{
+		id = knownId;
+	}
 }

@@ -28,4 +28,10 @@ public class Link {
 	@Id
 	@ManyToOne
     User userDebit;
+	
+	public Link(int creditUserId, int debitUserId) 
+	{
+		userCredit = new User(creditUserId);
+		userDebit = new User(debitUserId);
+	}
 }

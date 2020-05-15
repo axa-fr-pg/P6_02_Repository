@@ -1,6 +1,8 @@
 package swa.paymybuddy.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,13 @@ public class UserServiceImpl implements UserService {
 		}
 		return null;
 	}
+	
+	@Override
+	public User getAuthenticatedUser()
+	{
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return getUserByEmail(authentication.getName());
+	}
 
 	@Override
 	public User registerUserInternal(String email, String password) 
@@ -37,5 +46,4 @@ public class UserServiceImpl implements UserService {
 	    User user = new User(0, networkCode, email, bCryptPasswordEncoder.encode(password));
 	    return userRepository.save(user);
 	}
-	
 }
