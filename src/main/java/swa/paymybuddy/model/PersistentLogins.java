@@ -20,7 +20,6 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class PersistentLogins {
 
 	@Id
@@ -35,4 +34,21 @@ public class PersistentLogins {
 
 	@Temporal(TemporalType.TIMESTAMP)
     Date lastUsed;
+	
+	PersistentLogins(String s, String u, String t, Date l) {
+		series = s;
+		username = u;
+		token = t;
+		lastUsed = (Date) l.clone();
+	}
+	
+	public Date getLastUsed()
+	{
+		return (Date) lastUsed.clone();
+	}
+	
+	public void setLastUsed(Date l)
+	{
+		lastUsed = (Date) l.clone();
+	}
 }

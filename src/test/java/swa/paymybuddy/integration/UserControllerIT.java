@@ -1,5 +1,6 @@
 package swa.paymybuddy.integration;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
@@ -16,7 +17,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import swa.paymybuddy.model.PersistentLogins;
 import swa.paymybuddy.model.User;
+import swa.paymybuddy.repository.PersistentLoginsRepository;
 import swa.paymybuddy.repository.UserRepository;
 
 @SpringBootTest
@@ -28,6 +31,9 @@ public class UserControllerIT {
 	@Autowired
     private UserRepository userRepository;
 
+	@Autowired  
+	private PersistentLoginsRepository persistentLoginsRepository;
+	
 	private MockMvc mvc;
 	
 	private String passwordClear = "password";
@@ -37,6 +43,7 @@ public class UserControllerIT {
 	public void setup() 
 	{
 		userRepository.deleteAll();
+		persistentLoginsRepository.deleteAll();
 		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 	}
 	
@@ -75,18 +82,21 @@ public class UserControllerIT {
 	}
 
 	@Test
-	public void givenUserWithPersistenceToken_whenLoginWithoutCredentials_thenUserIsAuthenticated() throws Exception
+	public void givenValidCredentials_whenLoginWithRememberMe_thenPersistentLoginIsSaved() throws Exception
 	{
 		// GIVEN
 		String email = "email_4";
 		userRepository.save(new User(0, 0, email, passwordCrypted));
 		String form = "username=" + email + "&password=" + passwordClear + "&remember-me=on";
+		// WHEN
 		mvc.perform( post("/login")
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 		        .content(form)
 		        .accept(MediaType.APPLICATION_FORM_URLENCODED)
-		).andExpect(authenticated());
-		// WHEN & THEN
-		mvc.perform(formLogin("/login").user(email).password("anything")).andExpect(authenticated());
+		);
+		boolean tokenSaved = false;
+		for (PersistentLogins p : persistentLoginsRepository.findAll()) tokenSaved = true;
+		// THEN
+		assertTrue(tokenSaved);
 	}
 }
