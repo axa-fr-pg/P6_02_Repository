@@ -32,7 +32,7 @@ public class User implements Serializable {
 	public static final String ROLE_APP_USER = "ROLE_APP_USER";
 
 	@Id
-	@GeneratedValue(generator="userSequence") 
+	@GeneratedValue(generator="userSequence") // I didn't find out how to define sequence as INT instead of BIGINT
 	int id;
 	
 	@Column(columnDefinition = "TINYINT", nullable = true)

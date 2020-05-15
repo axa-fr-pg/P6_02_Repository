@@ -1,5 +1,6 @@
 package swa.paymybuddy.integration;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
@@ -62,13 +63,16 @@ public class UserControllerIT {
 	}	
 
 	@Test
-	public void givenValidCredentials_whenLogin_thenUserIsAuthenticated() throws Exception
+	public void givenValidCredentials_whenLogin_thenUserIsAuthenticatedWithoutToken() throws Exception
 	{
 		// GIVEN
 		String email = "email_2";
 		userRepository.save(new User(0, 0, email, passwordCrypted));
 		// WHEN & THEN
 		mvc.perform(formLogin("/login").user(email).password(passwordClear)).andExpect(authenticated());
+		boolean tokenSaved = false;
+		for (PersistentLogins p : persistentLoginsRepository.findAll()) tokenSaved = true;
+		assertFalse(tokenSaved);
 	}
 
 	@Test

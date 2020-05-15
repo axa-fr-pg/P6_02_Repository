@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.NaturalId;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,12 +30,9 @@ public class Account {
 	@ManyToOne
     User user;
 	
-	// Account type :
-	// 0 = native application account
-	// 1 = external bank account identified with BIC and IBAN
 	@Id
 	@Column(columnDefinition = "TINYINT", nullable = true)
-	int type; 
+	int type; // 0 : application internal, 1 : external bank account, other values : undefined
 	
 	@Column(length = 30, nullable = false)
 	String name;
@@ -41,11 +40,12 @@ public class Account {
 	@Column(columnDefinition = "DECIMAL(9,3)", nullable = false)
 	BigDecimal balance;
 	
-	// Required only for external accounts
+	@NaturalId
 	@Column(length = 11, nullable = false)
-	String bic;
+	String bic; // only for external accounts
 
-	// Required only for external accounts
+	
+	@NaturalId 
 	@Column(length = 34, nullable = false)
-	String iban;
+	String iban; // only for external accounts
 }
