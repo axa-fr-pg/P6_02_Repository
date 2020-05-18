@@ -31,15 +31,25 @@ public class TransferServiceImpl implements TransferService{
 	@Autowired
 	private AccountRepository accountRepository;
 
+	@Autowired
+	private AccountService accountService;
+
+	@Autowired
+	private UserService userService;
+
 	@Override
-	public Transfer transferInternal(int userCreditId, int userDebitId, String description, BigDecimal amount) 
+	public Transfer transferInternal(int myFriendId, String description, BigDecimal amount) 
+			throws TransferOutsideOfMyNetworkException, TransferAmountGreaterThanAccountBalanceException, InvalidTransferAmountException 
 	{
-		logger.info("transferInternal " + userCreditId + " - " + userDebitId + " " + description);
-		Optional<Link> link = linkRepository.findById(new LinkId(userCreditId, userDebitId));
-		if(link.isEmpty()) return null;
-		Optional<Account> accountCredit = accountRepository.findById(new AccountId(userCreditId, Account.TYPE_INTERNAL));
+		logger.info("transferInternal to " + myFriendId + " of " + amount.doubleValue() + " " + description);
+		int myUserId = userService.getAuthenticatedUser().getId();
+		Optional<Link> link = linkRepository.findById(new LinkId(myFriendId, myUserId));
+		if(link.isEmpty()) throw new TransferOutsideOfMyNetworkException();
+		accountService.operateTransfer(new AccountId(myUserId, Account.TYPE_INTERNAL), amount.negate(), false);
+		accountService.operateTransfer(new AccountId(myFriendId, Account.TYPE_INTERNAL), amount, true);
+		Optional<Account> accountCredit = accountRepository.findById(new AccountId(myFriendId, Account.TYPE_INTERNAL));
 		if(accountCredit.isEmpty()) return null;
-		Optional<Account> accountDebit = accountRepository.findById(new AccountId(userDebitId, Account.TYPE_INTERNAL));
+		Optional<Account> accountDebit = accountRepository.findById(new AccountId(myUserId, Account.TYPE_INTERNAL));
 		if(accountDebit.isEmpty()) return null;
 		Transfer transfer = new Transfer(accountCredit.get(), accountDebit.get(), link.get(), 0, description, amount);
 		return transferRepository.save(transfer);

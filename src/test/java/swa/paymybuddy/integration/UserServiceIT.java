@@ -86,7 +86,8 @@ public class UserServiceIT {
 		userService.registerUserInternal(email, passwordClear);
 		// THEN
 	    assertThrows(DataIntegrityViolationException.class, () -> 
-	    	userService.registerUserInternal(email, passwordClear));
+	    	userService.registerUserInternal(email, passwordClear)
+	    );
 	}
 
 	@Test

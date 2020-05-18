@@ -59,12 +59,24 @@ public class LinkServiceIT {
 				.build();
 	}
 	
+	private int loginAndReturnUserId(String email) throws Exception
+	{
+		int myUserId = userRepository.save(new User(0, 0, email, passwordCrypted)).getId();
+		SecurityContext securityContext = (SecurityContext) mvc
+				.perform(formLogin("/login").user(email).password(passwordClear))
+				.andExpect(authenticated())
+				.andReturn().getRequest().getSession()
+				.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+		SecurityContextHolder.setContext(securityContext);
+		return myUserId;
+	}
+
 	@Test
 	public void givenAuthenticated_whenAddToMyNetwork_thenTwoNewLinksCreated() throws Exception
 	{
 		// GIVEN
 		String myEmail = "email_1";
-		int myUserId = userRepository.save(new User(0, 0, myEmail, passwordCrypted)).getId();
+		int myUserId = loginAndReturnUserId(myEmail);
 		int myFriendId = userRepository.save(new User(0, 0, myEmail+"_friend", "not_used")).getId();
 		SecurityContext securityContext = (SecurityContext) mvc
 				.perform(formLogin("/login").user(myEmail).password(passwordClear))
