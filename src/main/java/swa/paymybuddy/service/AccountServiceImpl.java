@@ -24,4 +24,10 @@ public class AccountServiceImpl implements AccountService {
 		return accountRepository.save(account);
 	}
 
+	@Override
+	public Account addExternal(int userId) {
+		logger.info("addExternal " + userId);
+		Account account = new Account(userId, Account.TYPE_EXTERNAL);
+		return accountRepository.save(account);
+	}
 }

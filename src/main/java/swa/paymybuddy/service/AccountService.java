@@ -6,4 +6,5 @@ public interface AccountService {
 
 	Account addInternal(int userId);
 
+	Account addExternal(int userId);
 }

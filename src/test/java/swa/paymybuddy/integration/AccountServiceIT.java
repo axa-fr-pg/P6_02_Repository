@@ -81,5 +81,26 @@ public class AccountServiceIT {
 		assertEquals("", account.getIban());
 	}
 	
-	// TODO create account déconnecté refusé
+	@Test
+	public void givenAuthenticated_whenAddExternalAccount_thenAccountIsCreated() throws Exception
+	{
+		// GIVEN
+		String myEmail = "email_1";
+		int myUserId = userRepository.save(new User(0, 0, myEmail, passwordCrypted)).getId();
+		SecurityContext securityContext = (SecurityContext) mvc
+				.perform(formLogin("/login").user(myEmail).password(passwordClear))
+				.andExpect(authenticated())
+				.andReturn().getRequest().getSession()
+				.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+		SecurityContextHolder.setContext(securityContext);
+		// WHEN
+		Account account = accountService.addExternal(myUserId);
+		// THEN
+		assertNotNull(account);
+		assertEquals(myUserId, account.getUser().getId());
+		assertEquals(Account.TYPE_EXTERNAL, account.getType());
+		assertEquals(new BigDecimal(0), account.getBalance());
+		assertEquals("", account.getBic());
+		assertEquals("", account.getIban());
+	}
 }

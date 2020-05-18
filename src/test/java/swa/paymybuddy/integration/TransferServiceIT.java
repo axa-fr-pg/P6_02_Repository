@@ -91,6 +91,7 @@ public class TransferServiceIT {
 		assertNotNull(accountDebit);
 		Account accountCredit = accountRepository.save(new Account(myFriendUser.getId(), Account.TYPE_INTERNAL));
 		assertNotNull(accountCredit);
+		BigDecimal amount = new BigDecimal(12345.67);
 		SecurityContext securityContext = (SecurityContext) mvc
 				.perform(formLogin("/login").user(myEmail).password(passwordClear))
 				.andExpect(authenticated())
@@ -98,7 +99,7 @@ public class TransferServiceIT {
 				.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
 		SecurityContextHolder.setContext(securityContext);
 		// WHEN
-		Transfer transfer = transferService.transferInternal(myFriendUser.getId(), myUser.getId(), description);
+		Transfer transfer = transferService.transferInternal(myFriendUser.getId(), myUser.getId(), description, amount);
 		// THEN
 		assertNotNull(transfer);
 		assertEquals(myUser.getId(), transfer.getAccountDebit().getUser().getId());
@@ -106,8 +107,11 @@ public class TransferServiceIT {
 		assertEquals(Account.TYPE_INTERNAL, transfer.getAccountDebit().getType());
 		assertEquals(Account.TYPE_INTERNAL, transfer.getAccountCredit().getType());
 		assertEquals(description, transfer.getDescription());
+		assertEquals(amount, transfer.getAmount());
 	}
 	
 	// TODO tests négatifs sans prérequis : connexion, link, account
+	
+	// TODO vérifier le solde du transfert
 	
 }

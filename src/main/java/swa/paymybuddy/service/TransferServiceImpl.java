@@ -1,5 +1,6 @@
 package swa.paymybuddy.service;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ public class TransferServiceImpl implements TransferService{
 	private AccountRepository accountRepository;
 
 	@Override
-	public Transfer transferInternal(int userCreditId, int userDebitId, String description) 
+	public Transfer transferInternal(int userCreditId, int userDebitId, String description, BigDecimal amount) 
 	{
 		logger.info("transferInternal " + userCreditId + " - " + userDebitId + " " + description);
 		Optional<Link> link = linkRepository.findById(new LinkId(userCreditId, userDebitId));
@@ -40,7 +41,7 @@ public class TransferServiceImpl implements TransferService{
 		if(accountCredit.isEmpty()) return null;
 		Optional<Account> accountDebit = accountRepository.findById(new AccountId(userDebitId, Account.TYPE_INTERNAL));
 		if(accountDebit.isEmpty()) return null;
-		Transfer transfer = new Transfer(accountCredit.get(), accountDebit.get(), link.get(), 0, description);
+		Transfer transfer = new Transfer(accountCredit.get(), accountDebit.get(), link.get(), 0, description, amount);
 		return transferRepository.save(transfer);
 	}
 }

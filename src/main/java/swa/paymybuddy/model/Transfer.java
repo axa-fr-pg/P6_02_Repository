@@ -1,5 +1,7 @@
 package swa.paymybuddy.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -48,4 +50,7 @@ public class Transfer {
 
 	@Column(length = 100, nullable = false)
 	String description;
+	
+	@Column(columnDefinition = "DECIMAL(9,3)", nullable = false)
+	BigDecimal amount;
 }
