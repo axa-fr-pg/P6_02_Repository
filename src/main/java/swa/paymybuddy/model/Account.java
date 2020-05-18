@@ -26,26 +26,32 @@ import lombok.experimental.FieldDefaults;
 @IdClass(AccountId.class)
 public class Account {
 
+	public static final int TYPE_INTERNAL = 0;
+	public static final int TYPE_EXTERNAL = 1;
+	
 	@Id
 	@ManyToOne
     User user;
 	
 	@Id
 	@Column(columnDefinition = "TINYINT", nullable = true)
-	int type; // 0 : application internal, 1 : external bank account, other values : undefined
-	
-	@Column(length = 30, nullable = false)
-	String name;
+	int type;
 	
 	@Column(columnDefinition = "DECIMAL(9,3)", nullable = false)
 	BigDecimal balance;
-	
-	@NaturalId
+
 	@Column(length = 11, nullable = false)
 	String bic; // only for external accounts
 
-	
-	@NaturalId 
 	@Column(length = 34, nullable = false)
 	String iban; // only for external accounts
+
+	public Account(int userId, int accountType) // to create an empty account
+	{
+		user = new User(userId);
+		type = accountType;
+		balance = new BigDecimal(0);
+		bic = new String();
+		iban = new String();
+	}
 }
