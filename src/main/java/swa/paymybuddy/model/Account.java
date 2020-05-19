@@ -49,7 +49,7 @@ public class Account {
 		user = new User(userId);
 		type = accountType;
 		balance = new BigDecimal(0);
-		bic = new String();
-		iban = new String();
+		bic = "";
+		iban = "";
 	}
 }

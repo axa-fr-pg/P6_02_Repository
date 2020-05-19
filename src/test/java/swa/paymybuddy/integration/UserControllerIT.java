@@ -20,6 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import swa.paymybuddy.model.PersistentLogins;
 import swa.paymybuddy.model.User;
+import swa.paymybuddy.repository.AccountRepository;
 import swa.paymybuddy.repository.PersistentLoginsRepository;
 import swa.paymybuddy.repository.UserRepository;
 
@@ -32,6 +33,9 @@ public class UserControllerIT {
 	@Autowired
     private UserRepository userRepository;
 
+	@Autowired
+    private AccountRepository accountRepository;
+
 	@Autowired  
 	private PersistentLoginsRepository persistentLoginsRepository;
 	
@@ -43,6 +47,7 @@ public class UserControllerIT {
 	@BeforeEach
 	public void setup() 
 	{
+		accountRepository.deleteAll();
 		persistentLoginsRepository.deleteAll();
 		userRepository.deleteAll();
 		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();

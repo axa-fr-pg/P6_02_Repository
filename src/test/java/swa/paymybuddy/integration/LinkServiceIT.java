@@ -22,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import swa.paymybuddy.model.LinkId;
 import swa.paymybuddy.model.User;
+import swa.paymybuddy.repository.AccountRepository;
 import swa.paymybuddy.repository.LinkRepository;
 import swa.paymybuddy.repository.UserRepository;
 import swa.paymybuddy.service.LinkService;
@@ -34,6 +35,9 @@ public class LinkServiceIT {
 
 	@Autowired
 	private LinkRepository linkRepository;
+
+	@Autowired
+    private AccountRepository accountRepository;
 
 	@Autowired
     private UserRepository userRepository;
@@ -52,6 +56,7 @@ public class LinkServiceIT {
 	@BeforeEach
 	public void setup() 
 	{
+		accountRepository.deleteAll();
 		linkRepository.deleteAll();
 		userRepository.deleteAll();
 		mvc = MockMvcBuilders.webAppContextSetup(context)
