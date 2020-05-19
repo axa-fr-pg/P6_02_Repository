@@ -14,10 +14,6 @@
 	<name>paymybuddy</name>
 	<description>Pay My Buddy</description>
 
-	<prerequisites>
-	    <maven>3.6.3</maven>
-	</prerequisites>
-
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
@@ -44,7 +40,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -61,28 +56,15 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!--dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
-		</dependency-->
-        <dependency>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.5</version>
-            <type>maven-plugin</type>
-        </dependency>	
 	    <dependency>
 	        <groupId>org.projectlombok</groupId>
 	        <artifactId>lombok</artifactId>
-	        <version>1.18.2</version>
 	        <scope>provided</scope>
-	    </dependency>        	
+	    </dependency>  
 	</dependencies>
 
 	<build>
-		<plugins>
-		
+		<plugins>		
 		   <plugin>
 		        <groupId>org.apache.maven.plugins</groupId>
 		        <artifactId>maven-jar-plugin</artifactId>
@@ -95,14 +77,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 	            <artifactId>maven-assembly-plugin</artifactId>
-	            <version>3.1.1</version>
 	            <configuration>
 	                <finalName>${name.project}</finalName>
 	                <archive>
 	                    <manifest>
 	                        <mainClass>swa.paymybuddy.PayMyBuddyApplication</mainClass>
 	                    </manifest>
-	                    <manifestFile>${basedir}/META-INF/MANIFEST.MF</manifestFile>
+	                    <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
 	                </archive>
 	                <descriptorRefs>
 	                    <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -122,34 +103,47 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			    <!--executions>
+			         <execution>
+			             <id>start-spring-boot</id>
+			             <phase>pre-integration-test</phase>
+			             <goals>
+			                 <goal>start</goal>
+			             </goals>
+			         </execution>
+			         <execution>
+			             <id>stop-spring-boot</id>
+			             <phase>post-integration-test</phase>
+			             <goals>
+			                 <goal>stop</goal>
+			             </goals>
+			         </execution>
+			     </executions-->				
 			</plugin>
+		
+			
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
                 <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.2.0</version>
-                    </dependency>
-				    <dependency>
-				      <groupId>org.apache.maven.surefire</groupId>
-				      <artifactId>surefire-logger-api</artifactId>
-				      <version>2.21.0</version>
-				      <scope>runtime</scope>
-				      <optional>true</optional>
-				    </dependency>
+			        <dependency>
+			          <groupId>org.junit.platform</groupId>
+			          <artifactId>junit-platform-surefire-provider</artifactId>
+			          <version>1.2.0</version>
+			        </dependency>
+			        <dependency>
+			          <groupId>org.junit.jupiter</groupId>
+			          <artifactId>junit-jupiter-engine</artifactId>
+			          <version>5.5.2</version>
+			        </dependency>
                 </dependencies>
                 <configuration>
+                	<argLine>${surefire.jacoco.args}</argLine>
                     <includes>
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>    						
-                	<argLine>${surefire.jacoco.args}</argLine>
-                    <forkCount>0</forkCount>
-                    <reuseForks>false</reuseForks>
-                    <printSummary>true</printSummary>
+                    <parallel>none</parallel>
                 </configuration>
             </plugin>
             <plugin>
@@ -158,7 +152,7 @@
                 <version>0.8.5</version>
                 <executions>      
                     <execution>
-                    	<id>before-test-execution</id>
+                    	<id>define-report-location</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
@@ -168,8 +162,8 @@
  						</configuration>
                     </execution>                
                     <execution>
-                        <id>after-test-execution</id>
-                        <phase>test</phase>
+                    	<id>write-report</id>
+                    	<phase>test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>

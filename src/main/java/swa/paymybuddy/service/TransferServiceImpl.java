@@ -18,7 +18,7 @@ import swa.paymybuddy.repository.LinkRepository;
 import swa.paymybuddy.repository.TransferRepository;
 
 @Service
-public class TransferServiceImpl implements TransferService{
+public class TransferServiceImpl implements TransferService {
 
     private static final Logger logger = LoggerFactory.getLogger(TransferServiceImpl.class);
 
@@ -45,13 +45,9 @@ public class TransferServiceImpl implements TransferService{
 		int myUserId = userService.getAuthenticatedUser().getId();
 		Optional<Link> link = linkRepository.findById(new LinkId(myFriendId, myUserId));
 		if(link.isEmpty()) throw new TransferOutsideOfMyNetworkException();
-		accountService.operateTransfer(new AccountId(myUserId, Account.TYPE_INTERNAL), amount.negate(), false);
-		accountService.operateTransfer(new AccountId(myFriendId, Account.TYPE_INTERNAL), amount, true);
-		Optional<Account> accountCredit = accountRepository.findById(new AccountId(myFriendId, Account.TYPE_INTERNAL));
-		if(accountCredit.isEmpty()) return null;
-		Optional<Account> accountDebit = accountRepository.findById(new AccountId(myUserId, Account.TYPE_INTERNAL));
-		if(accountDebit.isEmpty()) return null;
-		Transfer transfer = new Transfer(accountCredit.get(), accountDebit.get(), link.get(), 0, description, amount);
+		Account accountDebit = accountService.operateTransfer(new AccountId(myUserId, Account.TYPE_INTERNAL), amount.negate(), false);
+		Account accountCredit = accountService.operateTransfer(new AccountId(myFriendId, Account.TYPE_INTERNAL), amount, true);
+		Transfer transfer = new Transfer(accountCredit, accountDebit, link.get(), 0, description, amount);
 		return transferRepository.save(transfer);
 	}
 }

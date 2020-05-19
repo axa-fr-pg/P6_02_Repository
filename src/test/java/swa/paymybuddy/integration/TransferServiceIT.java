@@ -2,7 +2,6 @@ package swa.paymybuddy.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.FilterChainProxy;
@@ -29,7 +29,6 @@ import swa.paymybuddy.repository.AccountRepository;
 import swa.paymybuddy.repository.LinkRepository;
 import swa.paymybuddy.repository.TransferRepository;
 import swa.paymybuddy.repository.UserRepository;
-import swa.paymybuddy.service.TransferAmountGreaterThanAccountBalanceException;
 import swa.paymybuddy.service.TransferOutsideOfMyNetworkException;
 import swa.paymybuddy.service.TransferService;
 
@@ -155,9 +154,9 @@ public class TransferServiceIT {
 		Link link = new Link(myFriendUser.getId(), myUser.getId());
 		linkRepository.save(link);
 		BigDecimal amount = new BigDecimal(12345.67);
-		// WHEN
-		Transfer transfer = transferService.transferInternal(myFriendUser.getId(), description, amount);
-		// THEN
-		assertNull(transfer);
+		// WHEN & THEN
+	    assertThrows(JpaSystemException.class, () -> 
+	    	transferService.transferInternal(myFriendUser.getId(), description, amount)
+	    );
 	}
 }
