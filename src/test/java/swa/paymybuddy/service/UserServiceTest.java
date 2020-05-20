@@ -96,4 +96,14 @@ public class UserServiceTest
     		userService.registerUserSocialNetwork(u5)
 	    );
 	}
+	
+	@Test
+	void givenUnauthenticated_getAuthenticatedUser_throwsException()
+	{
+		// GIVEN
+		// WHEN & THEN
+		assertThrows(NoAuthenticatedUserException.class, () ->
+			userService.getAuthenticatedUser()
+		);
+	}
 }

@@ -2,6 +2,7 @@ package swa.paymybuddy.service;
 
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
 
@@ -32,16 +33,11 @@ public class RelationServiceTest
 	@MockBean
 	UserService userService;
 
-	@BeforeEach
-	public void setup()
-	{
-		when(userService.getAuthenticatedUser()).thenReturn(u1);
-	}
-
 	@Test
-	public void givenFriend_addUserToMyNetworkForCredit_returnsTheRightRelation()
+	public void givenFriend_addUserToMyNetworkForCredit_returnsTheRightRelation() throws Exception
 	{
 		// GIVEN
+		when(userService.getAuthenticatedUser()).thenReturn(u1);
 		when(relationRepository.save(any(Relation.class))).thenReturn(r21);
 		// WHEN
 		Relation r = relationService.addUserToMyNetworkForCredit(u2.getId());
@@ -51,14 +47,15 @@ public class RelationServiceTest
 	}
 
 	@Test
-	public void givenFriend_addUserToMyNetworkForDebit_returnsTheRightRelation()
+	public void givenFriend_addUserToMyNetworkForDebit_returnsTheRightRelation() throws Exception
 	{
 		// GIVEN
+		when(userService.getAuthenticatedUser()).thenReturn(u1);
 		when(relationRepository.save(any(Relation.class))).thenReturn(r12);
 		// WHEN
 		Relation r = relationService.addUserToMyNetworkForCredit(u2.getId());
 		// THEN
 		assertEquals(u1.getId(), r.getUserCredit().getId());
 		assertEquals(u2.getId(), r.getUserDebit().getId());
-	}
+	}	
 }

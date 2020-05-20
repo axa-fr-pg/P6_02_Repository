@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,10 +33,13 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public User getAuthenticatedUser()
+	public User getAuthenticatedUser() throws NoAuthenticatedUserException
 	{
 		logger.info("getAuthenticatedUser ");
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		SecurityContext context = SecurityContextHolder.getContext();
+		if (context == null) throw new NoAuthenticatedUserException();
+		Authentication authentication = context.getAuthentication();
+		if (authentication == null) throw new NoAuthenticatedUserException();
 		return getUserByEmail(authentication.getName());
 	}
 

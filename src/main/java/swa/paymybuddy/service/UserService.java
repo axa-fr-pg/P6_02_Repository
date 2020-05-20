@@ -6,7 +6,7 @@ public interface UserService {
 	
 	User getUserByEmail(String email);
 	
-	User getAuthenticatedUser();
+	User getAuthenticatedUser() throws NoAuthenticatedUserException;
 	
 	User registerUserInternal(User user);
 

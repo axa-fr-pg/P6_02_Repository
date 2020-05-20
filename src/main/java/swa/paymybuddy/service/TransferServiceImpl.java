@@ -39,7 +39,8 @@ public class TransferServiceImpl implements TransferService {
 
 	@Override
 	public Transfer transferInternal(int myFriendId, String description, BigDecimal amount) 
-			throws TransferOutsideOfMyNetworkException, TransferAmountGreaterThanAccountBalanceException, InvalidTransferAmountException 
+			throws 	TransferOutsideOfMyNetworkException, TransferAmountGreaterThanAccountBalanceException, 
+					InvalidTransferAmountException, NoAuthenticatedUserException 
 	{
 		logger.info("transferInternal to " + myFriendId + " of " + amount.doubleValue() + " " + description);
 		int myUserId = userService.getAuthenticatedUser().getId();

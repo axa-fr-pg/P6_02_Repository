@@ -21,7 +21,7 @@ public class RelationServiceImpl implements RelationService
 	private UserService userService;
 
 	@Override
-	public Relation addUserToMyNetworkForCredit(int myFriendUserId) // I can credit my friend
+	public Relation addUserToMyNetworkForCredit(int myFriendUserId) throws NoAuthenticatedUserException // I can credit my friend
 	{
 		logger.info("addUserToMyNetworkForCredit " + myFriendUserId);
 		User myUser = userService.getAuthenticatedUser();
@@ -30,7 +30,7 @@ public class RelationServiceImpl implements RelationService
 	}
 
 	@Override
-	public Relation addUserToMyNetworkForDebit(int myFriendUserId) // My friend can credit me
+	public Relation addUserToMyNetworkForDebit(int myFriendUserId) throws NoAuthenticatedUserException // My friend can credit me
 	{
 		logger.info("addUserToMyNetworkForDebit " + myFriendUserId);
 		User myUser = userService.getAuthenticatedUser();
@@ -39,7 +39,7 @@ public class RelationServiceImpl implements RelationService
 	}
 
 	@Override // Add to my network means enable transfers in both directions
-	public boolean addUserToMyNetwork(int userId) {
+	public boolean addUserToMyNetwork(int userId) throws NoAuthenticatedUserException {
 		logger.info("addUserToMyNetwork " + userId);
 		return (addUserToMyNetworkForCredit(userId) != null && addUserToMyNetworkForDebit(userId) != null);
 	}

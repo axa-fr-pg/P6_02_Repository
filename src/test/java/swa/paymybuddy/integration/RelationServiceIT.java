@@ -3,6 +3,7 @@ package swa.paymybuddy.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
@@ -24,6 +25,7 @@ import swa.paymybuddy.model.RelationId;
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.RelationRepository;
 import swa.paymybuddy.repository.UserRepository;
+import swa.paymybuddy.service.NoAuthenticatedUserException;
 import swa.paymybuddy.service.RelationService;
 
 @SpringBootTest
@@ -84,21 +86,10 @@ public class RelationServiceIT {
 	public void givenNotAuthenticated_whenAddToMyNetwork_thenExceptionIsRaised() throws Exception
 	{
 		// GIVEN
-		String myEmail = "email_1";
-		userRepository.save(new User(0, 0, myEmail, passwordCrypted)).getId();
-		int myFriendId = userRepository.save(new User(0, 0, myEmail+"_friend", "not_used")).getId();
 		mvc.perform(logout()).andExpect(unauthenticated());
-		// WHEN
-		Exception result = null;
-		try {
-			relationService.addUserToMyNetwork(myFriendId);
-		} catch (NullPointerException e) {
-			result = e;
-		}
-		// THEN
-		assertNotNull(result);
-		assertEquals(NullPointerException.class, result.getClass());
-		assertEquals("swa.paymybuddy.service.UserServiceImpl", result.getStackTrace()[0].getClassName());
-		assertEquals("getAuthenticatedUser", result.getStackTrace()[0].getMethodName());
+		// WHEN & THEN
+		assertThrows(NoAuthenticatedUserException.class, () ->
+			relationService.addUserToMyNetwork(999)
+		);
 	}
 }
