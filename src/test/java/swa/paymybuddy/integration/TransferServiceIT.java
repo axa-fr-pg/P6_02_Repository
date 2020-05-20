@@ -3,53 +3,46 @@ package swa.paymybuddy.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
-
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.orm.jpa.JpaSystemException;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.FilterChainProxy;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import swa.paymybuddy.model.Account;
 import swa.paymybuddy.model.AccountId;
-import swa.paymybuddy.model.Link;
+import swa.paymybuddy.model.Relation;
 import swa.paymybuddy.model.Transfer;
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.AccountRepository;
-import swa.paymybuddy.repository.LinkRepository;
-import swa.paymybuddy.repository.TransferRepository;
+import swa.paymybuddy.repository.RelationRepository;
 import swa.paymybuddy.repository.UserRepository;
+import swa.paymybuddy.service.RelationService;
 import swa.paymybuddy.service.TransferOutsideOfMyNetworkException;
 import swa.paymybuddy.service.TransferService;
 
 @SpringBootTest
 public class TransferServiceIT {
 
-	private String passwordClear = "password";
-	private String passwordCrypted = "$2y$10$Tbpujg3N8c91uCfOBMLw/eoEVfJp9hqV1.9qcbZZWxgYjuX1Zv9.G";
-
 	@Autowired
 	private AccountRepository accountRepository;
 
 	@Autowired
-	private TransferRepository transferRepository;
-	
-	@Autowired
-	private LinkRepository linkRepository;
+	private RelationRepository relationRepository;
 
 	@Autowired
     private UserRepository userRepository;
 
+	@Autowired
+	private TestService testService;
+
+	@Autowired
+	private TransferService transferService;
 	@Autowired
 	private WebApplicationContext context;
 	
@@ -57,46 +50,26 @@ public class TransferServiceIT {
     private FilterChainProxy springSecurityFilterChain;
 
 	private MockMvc mvc;
-
-	@Autowired
-	private TransferService transferService;
-
+	
 	@BeforeEach
 	public void setup() 
 	{
-		transferRepository.deleteAll();
-		accountRepository.deleteAll();
-		linkRepository.deleteAll();
-		userRepository.deleteAll();
-		mvc = MockMvcBuilders.webAppContextSetup(context)
-				.addFilters(springSecurityFilterChain)
-				.build();
-	}
-	
-	private User loginAndReturnUser(String email) throws Exception
-	{
-		User myUser = userRepository.save(new User(0, 0, email, passwordCrypted));
-		SecurityContext securityContext = (SecurityContext) mvc
-				.perform(formLogin("/login").user(email).password(passwordClear))
-				.andExpect(authenticated())
-				.andReturn().getRequest().getSession()
-				.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-		SecurityContextHolder.setContext(securityContext);
-		return myUser;
+		testService.cleanAllTables();
+		mvc = MockMvcBuilders.webAppContextSetup(context).addFilters(springSecurityFilterChain).build();
 	}
 
 	@Test
-	public void givenAuthenticatedWithLinkAndBothAccounts_whenTransferInternal_thenTransferIsCreatedAndBalanceUpdated() throws Exception
+	public void givenAuthenticatedWithrelationAndBothAccounts_whenTransferInternal_thenTransferIsCreatedAndBalanceUpdated() throws Exception
 	{
 		// GIVEN
 		String myEmail = "email_1";
-		User myUser = loginAndReturnUser(myEmail);
+		User myUser = testService.loginAndReturnUser(mvc, myEmail);
 		assertNotNull(myUser);
 		User myFriendUser = userRepository.save(new User(0, 0, myEmail+"_friend", "not_used"));
 		assertNotNull(myFriendUser);
 		String description = "test transfer " + myEmail;
-		Link link = new Link(myFriendUser.getId(), myUser.getId());
-		linkRepository.save(link);
+		Relation relation = new Relation(myFriendUser.getId(), myUser.getId());
+		relationRepository.save(relation);
 		BigDecimal amount = new BigDecimal(12345.67);
 		BigDecimal myBalance = new BigDecimal(111111.22);
 		BigDecimal myFriendBalance = new BigDecimal(33333.44);
@@ -121,11 +94,11 @@ public class TransferServiceIT {
 	}
 	
 	@Test
-	public void givenAuthenticatedWithoutLink_whenTransferInternal_thenTransferIsNotCreated() throws Exception
+	public void givenAuthenticatedWithoutrelation_whenTransferInternal_thenTransferIsNotCreated() throws Exception
 	{
 		// GIVEN
 		String myEmail = "email_1";
-		User myUser = loginAndReturnUser(myEmail);
+		User myUser = testService.loginAndReturnUser(mvc, myEmail);
 		assertNotNull(myUser);
 		User myFriendUser = userRepository.save(new User(0, 0, myEmail+"_friend", "not_used"));
 		assertNotNull(myFriendUser);
@@ -146,13 +119,13 @@ public class TransferServiceIT {
 	{
 		// GIVEN
 		String myEmail = "email_1";
-		User myUser = loginAndReturnUser(myEmail);
+		User myUser = testService.loginAndReturnUser(mvc, myEmail);
 		assertNotNull(myUser);
 		User myFriendUser = userRepository.save(new User(0, 0, myEmail+"_friend", "not_used"));
 		assertNotNull(myFriendUser);
 		String description = "test transfer " + myEmail;
-		Link link = new Link(myFriendUser.getId(), myUser.getId());
-		linkRepository.save(link);
+		Relation relation = new Relation(myFriendUser.getId(), myUser.getId());
+		relationRepository.save(relation);
 		BigDecimal amount = new BigDecimal(12345.67);
 		// WHEN & THEN
 	    assertThrows(JpaSystemException.class, () -> 

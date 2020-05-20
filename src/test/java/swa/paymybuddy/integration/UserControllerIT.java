@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -14,13 +13,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import swa.paymybuddy.model.PersistentLogins;
 import swa.paymybuddy.model.User;
-import swa.paymybuddy.repository.AccountRepository;
 import swa.paymybuddy.repository.PersistentLoginsRepository;
 import swa.paymybuddy.repository.UserRepository;
 
@@ -28,13 +27,10 @@ import swa.paymybuddy.repository.UserRepository;
 public class UserControllerIT {
 
 	@Autowired
-	private WebApplicationContext context;
-	
-	@Autowired
     private UserRepository userRepository;
 
 	@Autowired
-    private AccountRepository accountRepository;
+	private TestService testService;
 
 	@Autowired  
 	private PersistentLoginsRepository persistentLoginsRepository;
@@ -43,14 +39,18 @@ public class UserControllerIT {
 	
 	private String passwordClear = "password";
 	private String passwordCrypted = "$2y$10$Tbpujg3N8c91uCfOBMLw/eoEVfJp9hqV1.9qcbZZWxgYjuX1Zv9.G";
+	
+	@Autowired
+	private WebApplicationContext context;
+	
+    @Autowired
+    private FilterChainProxy springSecurityFilterChain;
 
 	@BeforeEach
 	public void setup() 
 	{
-		accountRepository.deleteAll();
-		persistentLoginsRepository.deleteAll();
-		userRepository.deleteAll();
-		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
+		testService.cleanAllTables();
+		mvc = MockMvcBuilders.webAppContextSetup(context).addFilters(springSecurityFilterChain).build();
 	}
 	
 	@Test

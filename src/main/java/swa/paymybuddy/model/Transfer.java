@@ -42,7 +42,7 @@ public class Transfer {
         @JoinColumn(name="account_credit_user_id", referencedColumnName="user_credit_id", insertable = false, updatable = false),
         @JoinColumn(name="account_debit_user_id", referencedColumnName="user_debit_id", insertable = false, updatable = false)
     })
-	Link link; // Foreign key to the link consists in both credit & debit user ids (within primary key)
+	Relation relation; // Foreign key to the relation consists in both credit & debit user ids (within primary key)
 	
 	@Id
 	@GeneratedValue(generator="transferSequence") // I didn't find out how to define sequence as INT instead of BIGINT

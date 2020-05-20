@@ -10,6 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.web.FilterChainProxy;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import swa.paymybuddy.model.Account;
 import swa.paymybuddy.model.AccountId;
@@ -31,11 +34,20 @@ public class AccountServiceIT {
 	@Autowired
     private UserRepository userRepository;
 
+	@Autowired
+	private TestService testService;
+
+	@Autowired
+	private WebApplicationContext context;
+	
+    @Autowired
+    private FilterChainProxy springSecurityFilterChain;
+
 	@BeforeEach
 	public void setup() 
 	{
-		accountRepository.deleteAll();
-		userRepository.deleteAll();
+		testService.cleanAllTables();
+		MockMvcBuilders.webAppContextSetup(context).addFilters(springSecurityFilterChain).build();
 	}
 	
 	@Test

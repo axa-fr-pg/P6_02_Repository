@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 
 import swa.paymybuddy.model.Account;
 import swa.paymybuddy.model.AccountId;
-import swa.paymybuddy.model.Link;
-import swa.paymybuddy.model.LinkId;
+import swa.paymybuddy.model.Relation;
+import swa.paymybuddy.model.RelationId;
 import swa.paymybuddy.model.Transfer;
 import swa.paymybuddy.repository.AccountRepository;
-import swa.paymybuddy.repository.LinkRepository;
+import swa.paymybuddy.repository.RelationRepository;
 import swa.paymybuddy.repository.TransferRepository;
 
 @Service
@@ -26,7 +26,7 @@ public class TransferServiceImpl implements TransferService {
 	private TransferRepository transferRepository;
 
     @Autowired
-	private LinkRepository linkRepository;
+	private RelationRepository relationRepository;
 
 	@Autowired
 	private AccountRepository accountRepository;
@@ -43,11 +43,11 @@ public class TransferServiceImpl implements TransferService {
 	{
 		logger.info("transferInternal to " + myFriendId + " of " + amount.doubleValue() + " " + description);
 		int myUserId = userService.getAuthenticatedUser().getId();
-		Optional<Link> link = linkRepository.findById(new LinkId(myFriendId, myUserId));
-		if(link.isEmpty()) throw new TransferOutsideOfMyNetworkException();
+		Optional<Relation> relation = relationRepository.findById(new RelationId(myFriendId, myUserId));
+		if(relation.isEmpty()) throw new TransferOutsideOfMyNetworkException();
 		Account accountDebit = accountService.operateTransfer(new AccountId(myUserId, Account.TYPE_INTERNAL), amount.negate(), false);
 		Account accountCredit = accountService.operateTransfer(new AccountId(myFriendId, Account.TYPE_INTERNAL), amount, true);
-		Transfer transfer = new Transfer(accountCredit, accountDebit, link.get(), 0, description, amount);
+		Transfer transfer = new Transfer(accountCredit, accountDebit, relation.get(), 0, description, amount);
 		return transferRepository.save(transfer);
 	}
 }

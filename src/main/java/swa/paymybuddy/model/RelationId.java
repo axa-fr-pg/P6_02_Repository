@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class LinkId implements Serializable {
+public class RelationId implements Serializable {
 
 	int userCredit;
 	int userDebit;

@@ -20,27 +20,26 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import swa.paymybuddy.model.LinkId;
+import swa.paymybuddy.model.RelationId;
 import swa.paymybuddy.model.User;
-import swa.paymybuddy.repository.AccountRepository;
-import swa.paymybuddy.repository.LinkRepository;
+import swa.paymybuddy.repository.RelationRepository;
 import swa.paymybuddy.repository.UserRepository;
-import swa.paymybuddy.service.LinkService;
+import swa.paymybuddy.service.RelationService;
 
 @SpringBootTest
-public class LinkServiceIT {
+public class RelationServiceIT {
 
 	private String passwordClear = "password";
 	private String passwordCrypted = "$2y$10$Tbpujg3N8c91uCfOBMLw/eoEVfJp9hqV1.9qcbZZWxgYjuX1Zv9.G";
 
 	@Autowired
-	private LinkRepository linkRepository;
-
-	@Autowired
-    private AccountRepository accountRepository;
+	private RelationRepository relationRepository;
 
 	@Autowired
     private UserRepository userRepository;
+
+    @Autowired
+	private TestService testService;
 
 	@Autowired
 	private WebApplicationContext context;
@@ -48,40 +47,24 @@ public class LinkServiceIT {
     @Autowired
     private FilterChainProxy springSecurityFilterChain;
 
-	private MockMvc mvc;
-
 	@Autowired
-	private LinkService linkService;
+	private RelationService relationService;
 
+	private MockMvc mvc;
+	
 	@BeforeEach
 	public void setup() 
 	{
-		accountRepository.deleteAll();
-		linkRepository.deleteAll();
-		userRepository.deleteAll();
-		mvc = MockMvcBuilders.webAppContextSetup(context)
-				.addFilters(springSecurityFilterChain)
-				.build();
+		testService.cleanAllTables();
+		mvc = MockMvcBuilders.webAppContextSetup(context).addFilters(springSecurityFilterChain).build();
 	}
 	
-	private int loginAndReturnUserId(String email) throws Exception
-	{
-		int myUserId = userRepository.save(new User(0, 0, email, passwordCrypted)).getId();
-		SecurityContext securityContext = (SecurityContext) mvc
-				.perform(formLogin("/login").user(email).password(passwordClear))
-				.andExpect(authenticated())
-				.andReturn().getRequest().getSession()
-				.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-		SecurityContextHolder.setContext(securityContext);
-		return myUserId;
-	}
-
 	@Test
-	public void givenAuthenticated_whenAddToMyNetwork_thenTwoNewLinksCreated() throws Exception
+	public void givenAuthenticated_whenAddToMyNetwork_thenTwoNewrelationsCreated() throws Exception
 	{
 		// GIVEN
 		String myEmail = "email_1";
-		int myUserId = loginAndReturnUserId(myEmail);
+		int myUserId = testService.loginAndReturnUser(mvc, myEmail).getId();
 		int myFriendId = userRepository.save(new User(0, 0, myEmail+"_friend", "not_used")).getId();
 		SecurityContext securityContext = (SecurityContext) mvc
 				.perform(formLogin("/login").user(myEmail).password(passwordClear))
@@ -90,15 +73,15 @@ public class LinkServiceIT {
 				.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
 		SecurityContextHolder.setContext(securityContext);
 		// WHEN
-		boolean result = linkService.addUserToMyNetwork(myFriendId);
+		boolean result = relationService.addUserToMyNetwork(myFriendId);
 		// THEN
 		assertEquals(true, result);
-		assertFalse(linkRepository.findById(new LinkId(myUserId, myFriendId)).isEmpty());
-		assertFalse(linkRepository.findById(new LinkId(myFriendId, myUserId)).isEmpty());
+		assertFalse(relationRepository.findById(new RelationId(myUserId, myFriendId)).isEmpty());
+		assertFalse(relationRepository.findById(new RelationId(myFriendId, myUserId)).isEmpty());
 	}
 	
 	@Test
-	public void givenNotAuthenticated_whenAddToMyNetwork_thenTwoNewLinksCreated() throws Exception
+	public void givenNotAuthenticated_whenAddToMyNetwork_thenTwoNewrelationsCreated() throws Exception
 	{
 		// GIVEN
 		String myEmail = "email_1";
@@ -108,7 +91,7 @@ public class LinkServiceIT {
 		// WHEN
 		Exception result = null;
 		try {
-			linkService.addUserToMyNetwork(myFriendId);
+			relationService.addUserToMyNetwork(myFriendId);
 		} catch (Exception e) {
 			result = e;
 		}

@@ -18,8 +18,8 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(LinkId.class)
-public class Link {
+@IdClass(RelationId.class)
+public class Relation {
 
 	@Id
 	@ManyToOne
@@ -29,7 +29,7 @@ public class Link {
 	@ManyToOne
     User userDebit;
 	
-	public Link(int creditUserId, int debitUserId) 
+	public Relation(int creditUserId, int debitUserId) 
 	{
 		userCredit = new User(creditUserId);
 		userDebit = new User(debitUserId);

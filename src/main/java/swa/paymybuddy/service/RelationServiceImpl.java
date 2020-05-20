@@ -5,40 +5,40 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import swa.paymybuddy.model.Link;
+import swa.paymybuddy.model.Relation;
 import swa.paymybuddy.model.User;
-import swa.paymybuddy.repository.LinkRepository;
+import swa.paymybuddy.repository.RelationRepository;
 
 @Service
-public class LinkServiceImpl implements LinkService 
+public class RelationServiceImpl implements RelationService 
 {
-    private static final Logger logger = LoggerFactory.getLogger(LinkServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(RelationServiceImpl.class);
 
     @Autowired
-	private LinkRepository linkRepository;
+	private RelationRepository relationRepository;
 
 	@Autowired
 	private UserService userService;
 
 	@Override
-	public Link addUserToMyNetworkForCredit(int myFriendUserId)
+	public Relation addUserToMyNetworkForCredit(int myFriendUserId)
 	{
 		logger.info("addUserToMyNetworkForCredit " + myFriendUserId);
 		User myUser = userService.getAuthenticatedUser();
-		Link link = new Link(myFriendUserId, myUser.getId());
-		return linkRepository.save(link);
+		Relation relation = new Relation(myFriendUserId, myUser.getId());
+		return relationRepository.save(relation);
 	}
 
 	@Override
-	public Link addUserToMyNetworkForDebit(int myFriendUserId)
+	public Relation addUserToMyNetworkForDebit(int myFriendUserId)
 	{
 		logger.info("addUserToMyNetworkForDebit " + myFriendUserId);
 		User myUser = userService.getAuthenticatedUser();
-		Link link = new Link(myUser.getId(), myFriendUserId);
-		return linkRepository.save(link);
+		Relation relation = new Relation(myUser.getId(), myFriendUserId);
+		return relationRepository.save(relation);
 	}
 
-	@Override // Initial assumption is to add user for both transfer directions
+	@Override // Add to my network means enable transfers in both directions
 	public boolean addUserToMyNetwork(int userId) {
 		logger.info("addUserToMyNetwork " + userId);
 		return (addUserToMyNetworkForCredit(userId) != null && addUserToMyNetworkForDebit(userId) != null);

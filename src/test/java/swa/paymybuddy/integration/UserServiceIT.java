@@ -30,10 +30,7 @@ public class UserServiceIT {
 	private String passwordCrypted = "$2y$10$Tbpujg3N8c91uCfOBMLw/eoEVfJp9hqV1.9qcbZZWxgYjuX1Zv9.G";
 
 	@Autowired
-	private WebApplicationContext context;
-	
-    @Autowired
-    private FilterChainProxy springSecurityFilterChain;
+	private TestService testService;
 
 	private MockMvc mvc;
 
@@ -46,13 +43,17 @@ public class UserServiceIT {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private WebApplicationContext context;
+	
+    @Autowired
+    private FilterChainProxy springSecurityFilterChain;
+
 	@BeforeEach
 	public void setup() 
 	{
-		userRepository.deleteAll();
-		mvc = MockMvcBuilders.webAppContextSetup(context)
-				.addFilters(springSecurityFilterChain)
-				.build();
+		testService.cleanAllTables();
+		mvc = MockMvcBuilders.webAppContextSetup(context).addFilters(springSecurityFilterChain).build();
 	}
 
 	@Test
