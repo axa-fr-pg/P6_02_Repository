@@ -60,7 +60,7 @@ public class RelationServiceIT {
 	}
 	
 	@Test
-	public void givenAuthenticated_whenAddToMyNetwork_thenTwoNewrelationsCreated() throws Exception
+	public void givenAuthenticated_whenAddToMyNetwork_thenTwoNewRelationsCreated() throws Exception
 	{
 		// GIVEN
 		String myEmail = "email_1";
@@ -81,7 +81,7 @@ public class RelationServiceIT {
 	}
 	
 	@Test
-	public void givenNotAuthenticated_whenAddToMyNetwork_thenTwoNewrelationsCreated() throws Exception
+	public void givenNotAuthenticated_whenAddToMyNetwork_thenExceptionIsRaised() throws Exception
 	{
 		// GIVEN
 		String myEmail = "email_1";
@@ -92,10 +92,10 @@ public class RelationServiceIT {
 		Exception result = null;
 		try {
 			relationService.addUserToMyNetwork(myFriendId);
-		} catch (Exception e) {
+		} catch (NullPointerException e) {
 			result = e;
 		}
-		// Should never be reached
+		// THEN
 		assertNotNull(result);
 		assertEquals(NullPointerException.class, result.getClass());
 		assertEquals("swa.paymybuddy.service.UserServiceImpl", result.getStackTrace()[0].getClassName());

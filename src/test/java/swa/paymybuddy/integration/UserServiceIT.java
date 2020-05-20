@@ -21,6 +21,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.UserRepository;
+import swa.paymybuddy.service.InvalidSocialNetworkCodeException;
 import swa.paymybuddy.service.UserService;
 
 @SpringBootTest
@@ -62,18 +63,18 @@ public class UserServiceIT {
 		// GIVEN
 		String email = "email_1";
 		// WHEN
-		User user = userService.registerUserInternal(email, passwordClear);
+		User user = userService.registerUserInternal(new User(0, 0, email, passwordClear));
 		// THEN
 		assertTrue(bCryptPasswordEncoder.matches(passwordClear, user.getPassword()));
 	}
 
 	@Test
-	public void givenNewUser_whenRegisterSocialNetwork_thenUserIsSavedInDatabase()
+	public void givenNewUser_whenRegisterSocialNetwork_thenUserIsSavedInDatabase() throws Exception
 	{
 		// GIVEN
 		String email = "email_2";
 		// WHEN
-		User user = userService.registerUserSocialNetwork(1, email, passwordClear);
+		User user = userService.registerUserSocialNetwork(new User(0, 1, email, passwordClear));
 		// THEN
 		assertTrue(bCryptPasswordEncoder.matches(passwordClear, user.getPassword()));
 	}
@@ -84,10 +85,10 @@ public class UserServiceIT {
 		// GIVEN
 		String email = "email_3";
 		// WHEN
-		userService.registerUserInternal(email, passwordClear);
+		userService.registerUserInternal(new User(0, 0, email, passwordClear));
 		// THEN
 	    assertThrows(DataIntegrityViolationException.class, () -> 
-	    	userService.registerUserInternal(email, passwordClear)
+	    	userService.registerUserInternal(new User(0, 0, email, passwordClear))
 	    );
 	}
 

@@ -8,7 +8,7 @@ public interface UserService {
 	
 	User getAuthenticatedUser();
 	
-	User registerUserInternal(String email, String password);
+	User registerUserInternal(User user);
 
-	User registerUserSocialNetwork(int networkCode, String email, String password);
+	User registerUserSocialNetwork(User user) throws InvalidSocialNetworkCodeException;
 }

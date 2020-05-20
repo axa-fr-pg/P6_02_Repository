@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import swa.paymybuddy.controller.UserController;
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.UserRepository;
 
@@ -40,19 +39,25 @@ public class UserServiceImpl implements UserService {
 		return getUserByEmail(authentication.getName());
 	}
 
-	@Override
-	public User registerUserInternal(String email, String password) 
-	{	
-		logger.info("registerUserInternal " + email);
-	    User user = new User(0, 0, email, bCryptPasswordEncoder.encode(password));
+	private User registerUser(User user)
+	{
+		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 	    return userRepository.save(user);
+	}
+	
+	@Override
+	public User registerUserInternal(User user) 
+	{	
+		logger.info("registerUserInternal " + user.getEmail());
+		user.setType(0); // Internal means type 0
+		return registerUser(user);
 	}
 
 	@Override
-	public User registerUserSocialNetwork(int networkCode, String email, String password) 
+	public User registerUserSocialNetwork(User user) throws InvalidSocialNetworkCodeException 
 	{	
-		logger.info("registerUserSocialNetwork " + email);
-	    User user = new User(0, networkCode, email, bCryptPasswordEncoder.encode(password));
-	    return userRepository.save(user);
+		logger.info("registerUserSocialNetwork " + user.getEmail());
+		if (user.getType() < 1) throw new InvalidSocialNetworkCodeException(); // 0 reserved for internal users
+		return registerUser(user);
 	}
 }

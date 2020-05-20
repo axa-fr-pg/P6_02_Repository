@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import swa.paymybuddy.model.User;
 import swa.paymybuddy.service.UserService;
 
 @RestController
@@ -23,7 +25,7 @@ public class UserController {
 	@PostMapping("/register")
 	public ResponseEntity<String> registerNewUser(@RequestParam String email, @RequestParam String password) {
 		logger.info("Registering new user " + email);
-		userService.registerUserInternal(email, password);
+		userService.registerUserInternal(new User( 0, 0, email, password));
 		return new ResponseEntity<String>("User " + email + " created successfully", HttpStatus.CREATED);
 	}	
 }

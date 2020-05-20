@@ -7,11 +7,6 @@ import swa.paymybuddy.model.AccountId;
 
 public interface AccountService {
 
-	Account addInternal(int userId);
-
-	Account addExternal(int userId);
-	
 	Account operateTransfer(AccountId accountId, BigDecimal amount, boolean credit) 
 			throws TransferAmountGreaterThanAccountBalanceException, InvalidTransferAmountException;
-	
 }

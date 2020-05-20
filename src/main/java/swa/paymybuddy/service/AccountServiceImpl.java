@@ -21,21 +21,6 @@ public class AccountServiceImpl implements AccountService {
 	private AccountRepository accountRepository;
 
 	@Override
-	public Account addInternal(int userId) 
-	{
-		logger.info("addInternal " + userId);
-		Account account = new Account(userId, Account.TYPE_INTERNAL);
-		return accountRepository.save(account);
-	}
-
-	@Override
-	public Account addExternal(int userId) {
-		logger.info("addExternal " + userId);
-		Account account = new Account(userId, Account.TYPE_EXTERNAL);
-		return accountRepository.save(account);
-	}
-	
-	@Override
 	public Account operateTransfer(AccountId accountId, BigDecimal amount, boolean credit) 
 			throws TransferAmountGreaterThanAccountBalanceException, InvalidTransferAmountException 
 	{

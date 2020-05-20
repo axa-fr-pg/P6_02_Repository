@@ -51,40 +51,6 @@ public class AccountServiceIT {
 	}
 	
 	@Test
-	public void givenUser_whenAddInternalAccount_thenAccountIsCreated() throws Exception
-	{
-		// GIVEN
-		String myEmail = "email_1";
-		int myUserId = userRepository.save(new User(0, 0, myEmail, "not required")).getId();
-		// WHEN
-		Account account = accountService.addInternal(myUserId);
-		// THEN
-		assertNotNull(account);
-		assertEquals(myUserId, account.getUser().getId());
-		assertEquals(Account.TYPE_INTERNAL, account.getType());
-		assertEquals(new BigDecimal(0), account.getBalance());
-		assertEquals("", account.getBic());
-		assertEquals("", account.getIban());
-	}
-	
-	@Test
-	public void givenUser_whenAddExternalAccount_thenAccountIsCreated() throws Exception
-	{
-		// GIVEN
-		String myEmail = "email_2";
-		int myUserId = userRepository.save(new User(0, 0, myEmail, "not required")).getId();
-		// WHEN
-		Account account = accountService.addExternal(myUserId);
-		// THEN
-		assertNotNull(account);
-		assertEquals(myUserId, account.getUser().getId());
-		assertEquals(Account.TYPE_EXTERNAL, account.getType());
-		assertEquals(new BigDecimal(0), account.getBalance());
-		assertEquals("", account.getBic());
-		assertEquals("", account.getIban());
-	}
-	
-	@Test
 	public void givenExistingAccount_whenOperateCreditTransfer_thenBalanceIsUpdated() throws Exception
 	{
 		// GIVEN
