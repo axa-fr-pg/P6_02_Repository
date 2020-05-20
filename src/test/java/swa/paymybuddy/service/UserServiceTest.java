@@ -1,6 +1,7 @@
 package swa.paymybuddy.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import java.util.Arrays;
@@ -51,6 +52,7 @@ public class UserServiceTest
 		// WHEN
 		User u = userService.getUserByEmail(u2.getEmail());
 		// THEN
+		assertNotNull(u);
 		assertEquals(u2.getId(), u.getId());
 		assertEquals(u2.getType(), u.getType());
 		assertEquals(u2.getEmail(), u.getEmail());
@@ -66,6 +68,7 @@ public class UserServiceTest
 		// WHEN
 		User u = userService.registerUserInternal(u4);
 		// THEN
+		assertNotNull(u);
 		assertEquals(u4crypted.getId(), u.getId());
 		assertEquals(u4crypted.getType(), u.getType());
 		assertEquals(u4crypted.getEmail(), u.getEmail());
@@ -81,6 +84,7 @@ public class UserServiceTest
 		// WHEN
 		User u = userService.registerUserSocialNetwork(u4);
 		// THEN
+		assertNotNull(u);
 		assertEquals(u4crypted.getId(), u.getId());
 		assertEquals(u4crypted.getType(), u.getType());
 		assertEquals(u4crypted.getEmail(), u.getEmail());
@@ -88,7 +92,7 @@ public class UserServiceTest
 	}
 	
 	@Test
-	void givenWrongNetworkCode_registerUserSocialNetwork_returnsTheRightUser() throws Exception
+	void givenWrongNetworkCode_registerUserSocialNetwork_throwsException() throws Exception
 	{
 		// GIVEN 
 		// WHEN & THEN

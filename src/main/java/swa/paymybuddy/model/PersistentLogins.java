@@ -43,13 +43,6 @@ public class PersistentLogins {
 	@Temporal(TemporalType.TIMESTAMP)
     Date lastUsed;
 	
-	PersistentLogins(String s, User u, String t, Date l) {
-		series = s;
-		username = u;
-		token = t;
-		lastUsed = (Date) l.clone();
-	}
-	
 	public Date getLastUsed()
 	{
 		return (Date) lastUsed.clone();

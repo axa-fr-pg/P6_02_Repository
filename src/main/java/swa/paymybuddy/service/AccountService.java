@@ -7,6 +7,9 @@ import swa.paymybuddy.model.AccountId;
 
 public interface AccountService {
 
-	Account operateTransfer(AccountId accountId, BigDecimal amount, boolean credit) 
+	BigDecimal calculateBalanceAfterTransfer(BigDecimal initialBalance, BigDecimal amountToOperate, boolean credit) 
+			throws TransferAmountGreaterThanAccountBalanceException, InvalidTransferAmountException;
+	
+	Account operateTransfer(Account account, BigDecimal amount, boolean credit) 
 			throws TransferAmountGreaterThanAccountBalanceException, InvalidTransferAmountException;
 }

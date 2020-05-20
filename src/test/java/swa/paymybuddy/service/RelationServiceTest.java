@@ -2,11 +2,10 @@ package swa.paymybuddy.service;
 
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +41,7 @@ public class RelationServiceTest
 		// WHEN
 		Relation r = relationService.addUserToMyNetworkForCredit(u2.getId());
 		// THEN
+		assertNotNull(r);
 		assertEquals(u2.getId(), r.getUserCredit().getId());
 		assertEquals(u1.getId(), r.getUserDebit().getId());
 	}
@@ -55,6 +55,7 @@ public class RelationServiceTest
 		// WHEN
 		Relation r = relationService.addUserToMyNetworkForCredit(u2.getId());
 		// THEN
+		assertNotNull(r);
 		assertEquals(u1.getId(), r.getUserCredit().getId());
 		assertEquals(u2.getId(), r.getUserDebit().getId());
 	}	

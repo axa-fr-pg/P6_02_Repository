@@ -19,23 +19,29 @@ public class AccountServiceImpl implements AccountService {
 
 	@Autowired
 	private AccountRepository accountRepository;
+	
+	public BigDecimal calculateBalanceAfterTransfer(BigDecimal initialBalance, BigDecimal amountToOperate, boolean credit) 
+			throws TransferAmountGreaterThanAccountBalanceException, InvalidTransferAmountException
+	{
+		logger.info("calculateBalance " + initialBalance.doubleValue() + " " + amountToOperate.doubleValue() + " " + credit);
+		if (amountToOperate.doubleValue() <= 0) throw new InvalidTransferAmountException();
+		BigDecimal amount = amountToOperate;
+		if (!credit) amount = amount.negate();
+		BigDecimal amountUpdated = initialBalance.add(amount);
+		if (amountUpdated.doubleValue() < 0) throw new TransferAmountGreaterThanAccountBalanceException();
+		return amountUpdated;
+	}
 
 	@Override
-	public Account operateTransfer(AccountId accountId, BigDecimal amount, boolean credit) 
+	public Account operateTransfer(Account account, BigDecimal amount, boolean credit) 
 			throws TransferAmountGreaterThanAccountBalanceException, InvalidTransferAmountException 
 	{
-		logger.info("operateTransfer " + accountId.getUser() + " " + accountId.getType() + " " + amount.doubleValue() + " " + credit);
-		Optional<Account> accountInitial = accountRepository.findById(accountId);
+		logger.info("operateTransfer " + account.getUser().getId() + " " + account.getType() + " " + amount.doubleValue() + " " + credit);
+		Optional<Account> accountInitial = accountRepository.findById(new AccountId(account.getUser().getId(), account.getType()));
 		if (accountInitial.isEmpty()) return null;
 		logger.info("operateTransfer found account ");
-		if (amount.doubleValue() == 0) throw new InvalidTransferAmountException();
-		if (credit && amount.doubleValue() < 0) throw new InvalidTransferAmountException();
-		logger.info("operateTransfer has correct amount");
-		Account accountUpdated = accountInitial.get();
-		BigDecimal amountUpdated = accountUpdated.getBalance().add(amount);
-		if (amountUpdated.doubleValue() < 0) throw new TransferAmountGreaterThanAccountBalanceException();
-		accountUpdated.setBalance(amountUpdated);
-		logger.info("new balance to be saved " + accountUpdated.getBalance());
-		return accountRepository.save(accountUpdated);
+		account.setBalance(calculateBalanceAfterTransfer(account.getBalance(), amount, credit));
+		logger.info("new balance to be saved " + account.getBalance());
+		return accountRepository.save(account);
 	}
 }

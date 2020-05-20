@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import swa.paymybuddy.model.Account;
-import swa.paymybuddy.model.AccountId;
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.AccountRepository;
 import swa.paymybuddy.repository.UserRepository;
@@ -51,77 +50,57 @@ public class AccountServiceIT {
 	}
 	
 	@Test
-	public void givenExistingAccount_whenOperateCreditTransfer_thenBalanceIsUpdated() throws Exception
+	public void givenExistingAccount_operateInternalCreditTransfer_updatesBalance() throws Exception
+	{
+		// GIVEN
+		String myFriendEmail = "email_1";
+		BigDecimal balanceInitial = new BigDecimal(12345.67);
+		BigDecimal amountCredit = new BigDecimal(111.22);
+		User myFriend = userRepository.save(new User(0, 0, myFriendEmail, "not required"));
+		Account myFriendAccount = accountRepository.save(new Account(myFriend, Account.TYPE_INTERNAL, balanceInitial, "", "") );
+		// WHEN
+		Account account = accountService.operateTransfer(myFriendAccount, amountCredit, true);
+		// THEN
+		assertNotNull(account);
+		assertEquals(myFriend.getId(), account.getUser().getId());
+		assertEquals(Account.TYPE_INTERNAL, account.getType());
+		assertEquals(balanceInitial.doubleValue(), account.getBalance().doubleValue() - amountCredit.doubleValue(), 0.0000000000001);
+		assertEquals("", account.getBic());
+		assertEquals("", account.getIban());
+	}
+	
+	@Test
+	public void givenSufficientMoney_operateInternalDebitTransfer_updatesBalance() throws Exception
+	{
+		// GIVEN
+		String myFriendEmail = "email_2";
+		User myFriend = userRepository.save(new User(0, 0, myFriendEmail, "not required"));
+		BigDecimal balanceInitial = new BigDecimal(12345.67);
+		Account myFriendAccount = accountRepository.save(new Account(myFriend, Account.TYPE_INTERNAL, balanceInitial, "", "") );
+		BigDecimal amountCredit = new BigDecimal(111.22);
+		// WHEN
+		Account account = accountService.operateTransfer(myFriendAccount, amountCredit, false);
+		// THEN
+		assertNotNull(account);
+		assertEquals(myFriend.getId(), account.getUser().getId());
+		assertEquals(Account.TYPE_INTERNAL, account.getType());
+		assertEquals(balanceInitial.doubleValue(), account.getBalance().doubleValue() + amountCredit.doubleValue(), 0.0000000000001);
+		assertEquals("", account.getBic());
+		assertEquals("", account.getIban());
+	}
+	
+	@Test
+	public void givenBalanceBelowTransferAmount_operateInternalDebitTransfer_throwsException() throws Exception
 	{
 		// GIVEN
 		String myFriendEmail = "email_3";
 		User myFriend = userRepository.save(new User(0, 0, myFriendEmail, "not required"));
-		BigDecimal balanceInitial = new BigDecimal(12345.67);
-		accountRepository.save(new Account(myFriend, Account.TYPE_INTERNAL, balanceInitial, "", "") );
+		BigDecimal balanceInitial = new BigDecimal(12.67);
+		Account myFriendAccount = accountRepository.save(new Account(myFriend, Account.TYPE_INTERNAL, balanceInitial, "", "") );
 		BigDecimal amountCredit = new BigDecimal(111.22);
-		// WHEN
-		Account account = accountService.operateTransfer(new AccountId(myFriend.getId(), Account.TYPE_INTERNAL), amountCredit, true);
-		// THEN
-		assertNotNull(account);
-		assertEquals(myFriend.getId(), account.getUser().getId());
-		assertEquals(Account.TYPE_INTERNAL, account.getType());
-		assertEquals(balanceInitial.doubleValue(), account.getBalance().doubleValue() - amountCredit.doubleValue(), 0.0000000000001);
-		assertEquals("", account.getBic());
-		assertEquals("", account.getIban());
-	}
-	
-	@Test
-	public void givenExistingAccount_whenOperateInternalCreditTransfer_thenBalanceIsUpdated() throws Exception
-	{
-		// GIVEN
-		String myFriendEmail = "email_4";
-		User myFriend = userRepository.save(new User(0, 0, myFriendEmail, "not required"));
-		BigDecimal balanceInitial = new BigDecimal(12345.67);
-		accountRepository.save(new Account(myFriend, Account.TYPE_INTERNAL, balanceInitial, "", "") );
-		BigDecimal amountCredit = new BigDecimal(111.22);
-		// WHEN
-		Account account = accountService.operateTransfer(new AccountId(myFriend.getId(), Account.TYPE_INTERNAL), amountCredit, true);
-		// THEN
-		assertNotNull(account);
-		assertEquals(myFriend.getId(), account.getUser().getId());
-		assertEquals(Account.TYPE_INTERNAL, account.getType());
-		assertEquals(balanceInitial.doubleValue(), account.getBalance().doubleValue() - amountCredit.doubleValue(), 0.0000000000001);
-		assertEquals("", account.getBic());
-		assertEquals("", account.getIban());
-	}
-	
-	@Test
-	public void givenExistingAccountWithSufficientProvision_whenOperateInternalDebitTransfer_thenBalanceIsUpdated() throws Exception
-	{
-		// GIVEN
-		String myEmail = "email_5";
-		User myUser = userRepository.save(new User(0, 0, myEmail, "not required"));
-		BigDecimal balanceInitial = new BigDecimal(54321.98);
-		accountRepository.save(new Account(myUser, Account.TYPE_INTERNAL, balanceInitial, "", "") );
-		BigDecimal amountDebit = new BigDecimal(-54321.97);
-		// WHEN
-		Account account = accountService.operateTransfer(new AccountId(myUser.getId(), Account.TYPE_INTERNAL), amountDebit, false);
-		// THEN
-		assertNotNull(account);
-		assertEquals(myUser.getId(), account.getUser().getId());
-		assertEquals(Account.TYPE_INTERNAL, account.getType());
-		assertEquals(balanceInitial.doubleValue(), account.getBalance().doubleValue() - amountDebit.doubleValue(), 0.0000000000001);
-		assertEquals("", account.getBic());
-		assertEquals("", account.getIban());
-	}
-
-	@Test
-	public void givenExistingAccountWithInsufficientProvision_whenOperateInternalDebitTransfer_thenExceptionIsRaised() throws Exception
-	{
-		// GIVEN
-		String myEmail = "email_5";
-		User myUser = userRepository.save(new User(0, 0, myEmail, "not required"));
-		BigDecimal balanceInitial = new BigDecimal(54321.98);
-		accountRepository.save(new Account(myUser, Account.TYPE_INTERNAL, balanceInitial, "", "") );
-		BigDecimal amountDebit = new BigDecimal(-54321.99);
 		// WHEN & THEN
-	    assertThrows(TransferAmountGreaterThanAccountBalanceException.class, () -> 
-	    	accountService.operateTransfer(new AccountId(myUser.getId(), Account.TYPE_INTERNAL), amountDebit, false)
-	    );
+		assertThrows( TransferAmountGreaterThanAccountBalanceException.class, () ->
+			accountService.operateTransfer(myFriendAccount, amountCredit, false)
+		);
 	}
 }
