@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import swa.paymybuddy.model.Relation;
-import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.RelationRepository;
 
 @Service
@@ -20,26 +19,34 @@ public class RelationServiceImpl implements RelationService
 	@Autowired
 	private UserService userService;
 
-	@Override
-	public Relation addUserToMyNetworkForCredit(int myFriendUserId) throws NoAuthenticatedUserException // I can credit my friend
+	private int getMyUserId(int myFriendUserId) throws NoAuthenticatedUserException, IllegalOperationOnMyOwnUserException
 	{
-		logger.info("addUserToMyNetworkForCredit " + myFriendUserId);
-		User myUser = userService.getAuthenticatedUser();
-		Relation relation = new Relation(myFriendUserId, myUser.getId());
+		logger.info("checkAuthenticatedUser " + myFriendUserId);
+		int myUserId = userService.getAuthenticatedUser().getId();
+		if (myUserId == myFriendUserId) throw new IllegalOperationOnMyOwnUserException();		
+		return myUserId;
+	}
+	
+	@Override
+	public Relation addUserToMyNetworkForCredit(int myFriendUserId) // I can credit my friend
+			throws NoAuthenticatedUserException, IllegalOperationOnMyOwnUserException 
+	{
+		logger.info("addUserToMyNetworkForCredit " + myFriendUserId);		
+		Relation relation = new Relation(myFriendUserId, getMyUserId(myFriendUserId));
 		return relationRepository.save(relation);
 	}
 
 	@Override
-	public Relation addUserToMyNetworkForDebit(int myFriendUserId) throws NoAuthenticatedUserException // My friend can credit me
+	public Relation addUserToMyNetworkForDebit(int myFriendUserId) // My friend can credit me
+			throws NoAuthenticatedUserException, IllegalOperationOnMyOwnUserException 
 	{
 		logger.info("addUserToMyNetworkForDebit " + myFriendUserId);
-		User myUser = userService.getAuthenticatedUser();
-		Relation relation = new Relation(myUser.getId(), myFriendUserId);
+		Relation relation = new Relation(getMyUserId(myFriendUserId), myFriendUserId);
 		return relationRepository.save(relation);
 	}
 
 	@Override // Add to my network means enable transfers in both directions
-	public boolean addUserToMyNetwork(int userId) throws NoAuthenticatedUserException {
+	public boolean addUserToMyNetwork(int userId) throws NoAuthenticatedUserException, IllegalOperationOnMyOwnUserException {
 		logger.info("addUserToMyNetwork " + userId);
 		return (addUserToMyNetworkForCredit(userId) != null && addUserToMyNetworkForDebit(userId) != null);
 	}

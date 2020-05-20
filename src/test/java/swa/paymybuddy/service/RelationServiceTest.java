@@ -3,6 +3,7 @@ package swa.paymybuddy.service;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
 
@@ -58,5 +59,16 @@ public class RelationServiceTest
 		assertNotNull(r);
 		assertEquals(u1.getId(), r.getUserCredit().getId());
 		assertEquals(u2.getId(), r.getUserDebit().getId());
+	}	
+	
+	@Test
+	public void givenUser_addMyselfToMyNetworkForDebit_throwsException() throws Exception
+	{
+		// GIVEN
+		when(userService.getAuthenticatedUser()).thenReturn(u1);
+		// WHEN & THEN
+		assertThrows(IllegalOperationOnMyOwnUserException.class, () ->
+				relationService.addUserToMyNetworkForCredit(u1.getId())
+		);
 	}	
 }
