@@ -1,22 +1,16 @@
 package swa.paymybuddy.service;
 
-import static org.hamcrest.CoreMatchers.any;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
-
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -48,17 +42,12 @@ public class UserServiceTest
 	@MockBean
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	@BeforeEach
-	public void setup() 
-	{
-		List<User> userList = Arrays.asList(u1, u2, u3);
-		when(userRepository.findAll()).thenReturn(userList);
-	}
-
 	@Test
 	void givenMultipleUsers_getUserByEmail_returnsTheRightUser()
 	{
-		// GIVEN setup()
+		// GIVEN 
+		List<User> userList = Arrays.asList(u1, u2, u3);
+		when(userRepository.findAll()).thenReturn(userList);
 		// WHEN
 		User u = userService.getUserByEmail(u2.getEmail());
 		// THEN
@@ -78,6 +67,9 @@ public class UserServiceTest
 		User u = userService.registerUserInternal(u4);
 		// THEN
 		assertEquals(u4crypted.getId(), u.getId());
+		assertEquals(u4crypted.getType(), u.getType());
+		assertEquals(u4crypted.getEmail(), u.getEmail());
+		assertEquals(u4crypted.getPassword(), u.getPassword());
 	}
 	
 	@Test
@@ -90,6 +82,9 @@ public class UserServiceTest
 		User u = userService.registerUserSocialNetwork(u4);
 		// THEN
 		assertEquals(u4crypted.getId(), u.getId());
+		assertEquals(u4crypted.getType(), u.getType());
+		assertEquals(u4crypted.getEmail(), u.getEmail());
+		assertEquals(u4crypted.getPassword(), u.getPassword());
 	}
 	
 	@Test
