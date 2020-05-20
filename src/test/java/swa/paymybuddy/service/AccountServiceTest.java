@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.math.BigDecimal;
 import swa.paymybuddy.model.Account;
-import swa.paymybuddy.model.Relation;
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.AccountRepository;
 

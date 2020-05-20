@@ -13,6 +13,7 @@ import lombok.Setter;
 @Setter
 public class RelationId implements Serializable {
 
+	private static final long serialVersionUID = 8280251507410843733L;
 	int userCredit;
 	int userDebit;
 }

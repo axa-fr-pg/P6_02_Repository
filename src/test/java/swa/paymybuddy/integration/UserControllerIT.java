@@ -76,7 +76,7 @@ public class UserControllerIT {
 		// WHEN & THEN
 		mvc.perform(formLogin("/login").user(email).password(passwordClear)).andExpect(authenticated());
 		boolean tokenSaved = false;
-		for (PersistentLogins p : persistentLoginsRepository.findAll()) tokenSaved = true;
+		for (PersistentLogins p : persistentLoginsRepository.findAll()) if (p!=null) tokenSaved = true;
 		assertFalse(tokenSaved);
 	}
 
@@ -104,7 +104,7 @@ public class UserControllerIT {
 		        .accept(MediaType.APPLICATION_FORM_URLENCODED)
 		);
 		boolean tokenSaved = false;
-		for (PersistentLogins p : persistentLoginsRepository.findAll()) tokenSaved = true;
+		for (PersistentLogins p : persistentLoginsRepository.findAll()) if (p!=null) tokenSaved = true;
 		// THEN
 		assertTrue(tokenSaved);
 	}

@@ -5,7 +5,7 @@ import swa.paymybuddy.model.Transfer;
 
 public interface TransferService {
 
-	Transfer transferInternal(int myFriendId, String description, BigDecimal amount) 
+	Transfer transferInternal(Transfer transfer) 
 			throws 	TransferOutsideOfMyNetworkException, TransferAmountGreaterThanAccountBalanceException, 
 					InvalidTransferAmountException, NoAuthenticatedUserException;
 

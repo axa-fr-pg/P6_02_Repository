@@ -21,7 +21,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.UserRepository;
-import swa.paymybuddy.service.InvalidSocialNetworkCodeException;
 import swa.paymybuddy.service.UserService;
 
 @SpringBootTest

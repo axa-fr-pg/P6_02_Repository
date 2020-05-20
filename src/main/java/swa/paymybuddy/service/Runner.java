@@ -2,31 +2,23 @@ package swa.paymybuddy.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
-
-import swa.paymybuddy.model.Relation;
-import swa.paymybuddy.model.Transfer;
-import swa.paymybuddy.model.User;
-import swa.paymybuddy.repository.RelationRepository;
-import swa.paymybuddy.repository.TransferRepository;
-import swa.paymybuddy.repository.UserRepository;
 
 @Service
 public class Runner implements CommandLineRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(Runner.class);
 
-	@Autowired
+/*	@Autowired
     private UserRepository userRepository;
 	@Autowired
     private RelationRepository relationRepository;
 	@Autowired
-    private TransferRepository transferRepository;
+    private TransferRepository transferRepository;*/
 	
     @Override
-    public void run(String[] args) throws Exception {
+    public void run(String... args) throws Exception {
     	    	
 		logger.info("run ");
 		

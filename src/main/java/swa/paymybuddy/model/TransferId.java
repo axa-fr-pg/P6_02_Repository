@@ -13,6 +13,7 @@ import lombok.Setter;
 @Setter
 public class TransferId implements Serializable {
 
+	private static final long serialVersionUID = -1131261621032753862L;
 	AccountId accountCredit;
 	AccountId accountDebit;
 	int transferId;

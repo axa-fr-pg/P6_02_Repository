@@ -29,6 +29,8 @@ import lombok.AllArgsConstructor;
 @Table(indexes = { @Index(name = "email_index", columnList = "email", unique=true) })
 public class User implements Serializable {
 	
+	private static final long serialVersionUID = 955065855418183406L;
+
 	public static final String ROLE_APP_USER = "ROLE_APP_USER";
 
 	@Id

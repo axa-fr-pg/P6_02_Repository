@@ -3,7 +3,6 @@ package swa.paymybuddy.service;
 import java.math.BigDecimal;
 
 import swa.paymybuddy.model.Account;
-import swa.paymybuddy.model.AccountId;
 
 public interface AccountService {
 

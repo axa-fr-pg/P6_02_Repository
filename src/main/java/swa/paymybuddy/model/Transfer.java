@@ -53,4 +53,15 @@ public class Transfer {
 	
 	@Column(columnDefinition = "DECIMAL(9,3)", nullable = false)
 	BigDecimal amount;
+	
+	public Transfer(int userCreditId, int userDebitId, int accountType, String description, BigDecimal amount)
+	{
+		User userCredit = new User(userCreditId);
+		User userDebit = new User(userDebitId);
+		this.accountCredit = new Account(userCredit.getId(), accountType);
+		this.accountDebit = new Account(userDebit.getId(), accountType);;
+		this.relation = new Relation(userCredit.getId(), userDebit.getId());
+		this.description = description;
+		this.amount = amount;
+	}
 }

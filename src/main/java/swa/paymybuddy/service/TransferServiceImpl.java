@@ -9,11 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import swa.paymybuddy.model.Account;
-import swa.paymybuddy.model.AccountId;
 import swa.paymybuddy.model.Relation;
 import swa.paymybuddy.model.RelationId;
 import swa.paymybuddy.model.Transfer;
-import swa.paymybuddy.repository.AccountRepository;
 import swa.paymybuddy.repository.RelationRepository;
 import swa.paymybuddy.repository.TransferRepository;
 
@@ -29,26 +27,25 @@ public class TransferServiceImpl implements TransferService {
 	private RelationRepository relationRepository;
 
 	@Autowired
-	private AccountRepository accountRepository;
-
-	@Autowired
 	private AccountService accountService;
 
 	@Autowired
 	private UserService userService;
 
 	@Override
-	public Transfer transferInternal(int myFriendId, String description, BigDecimal amount) 
+	public Transfer transferInternal(Transfer transfer) 
 			throws 	TransferOutsideOfMyNetworkException, TransferAmountGreaterThanAccountBalanceException, 
 					InvalidTransferAmountException, NoAuthenticatedUserException 
 	{
-		logger.info("transferInternal to " + myFriendId + " of " + amount.doubleValue() + " " + description);
 		int myUserId = userService.getAuthenticatedUser().getId();
+		int myFriendId = transfer.getAccountCredit().getUser().getId();
+		BigDecimal amount = transfer.getAmount();
+		logger.info("transferInternal to " +  myFriendId + " of " + amount.doubleValue() + " " + transfer.getDescription());
 		Optional<Relation> relation = relationRepository.findById(new RelationId(myFriendId, myUserId));
 		if(relation.isEmpty()) throw new TransferOutsideOfMyNetworkException();
-		Account accountDebit = accountService.operateTransfer(new AccountId(myUserId, Account.TYPE_INTERNAL), amount.negate(), false);
-		Account accountCredit = accountService.operateTransfer(new AccountId(myFriendId, Account.TYPE_INTERNAL), amount, true);
-		Transfer transfer = new Transfer(accountCredit, accountDebit, relation.get(), 0, description, amount);
+		transfer.setRelation(relation.get());
+		transfer.setAccountCredit(accountService.operateTransfer(new Account(myFriendId, Account.TYPE_INTERNAL), amount, true));
+		transfer.setAccountDebit(accountService.operateTransfer(new Account(myUserId, Account.TYPE_INTERNAL), amount, false));
 		return transferRepository.save(transfer);
 	}
 }
