@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import lombok.AccessLevel;
@@ -29,6 +31,7 @@ public class Account {
 	
 	@Id
 	@ManyToOne
+    @JoinColumn(name = "user", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_USER"))
     User user;
 	
 	@Id
