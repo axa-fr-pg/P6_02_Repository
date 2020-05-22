@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -26,7 +27,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(TransferId.class)
-@SequenceGenerator(name="transferSequence", sequenceName="transfer_sequence")
 public class Transfer {
 
 	@Id
@@ -45,7 +45,7 @@ public class Transfer {
 	Relation relation; // Foreign key to the relation consists in both credit & debit user ids (within primary key)
 	
 	@Id
-	@GeneratedValue(generator="transferSequence") // I didn't find out how to define sequence as INT instead of BIGINT
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	int transferId; 
 
 	@Column(length = 100, nullable = false)

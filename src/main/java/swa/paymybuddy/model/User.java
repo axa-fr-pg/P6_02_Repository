@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.SequenceGenerator;
@@ -25,7 +26,6 @@ import lombok.AllArgsConstructor;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SequenceGenerator(name="userSequence", sequenceName="user_sequence")
 @Table(indexes = { @Index(name = "email_index", columnList = "email", unique=true) })
 public class User implements Serializable {
 	
@@ -34,7 +34,7 @@ public class User implements Serializable {
 	public static final String ROLE_APP_USER = "ROLE_APP_USER";
 
 	@Id
-	@GeneratedValue(generator="userSequence") // I didn't find out how to define sequence as INT instead of BIGINT
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	int id;
 	
 	@Column(columnDefinition = "TINYINT", nullable = true)
