@@ -34,7 +34,6 @@ public class PersistentLogins {
 
 	@ManyToOne
     @JoinColumn(name = "username", referencedColumnName = "email")
-	@NaturalId
 	User username;
 
 	@Column(length = 64)
