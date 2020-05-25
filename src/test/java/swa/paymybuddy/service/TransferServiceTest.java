@@ -30,10 +30,13 @@ public class TransferServiceTest {
 	private User u1 = new User(1, 11, "email_1", "password_1"); // my id
 	private User u2 = new User(2, 12, "email_2", "password_2"); // my friend's id
 	private Relation r21 = new Relation(2, 1); // I can credit my friend
-	private Account accountInt1 = new Account(u1, Account.TYPE_INTERNAL, new BigDecimal(11111.1), "bic_1", "iban_1");
-	private Account accountInt2 = new Account(u2, Account.TYPE_INTERNAL, new BigDecimal(22.22), "bic_2", "iban_2");
+	private Account accountInt1 = new Account(u1, Account.TYPE_INTERNAL, new BigDecimal(11111.1), "bic_int_1", "iban_int_1");
+	private Account accountInt2 = new Account(u2, Account.TYPE_INTERNAL, new BigDecimal(22.22), "bic_int_2", "iban_int_2");
+	private Account accountExt1 = new Account(u1, Account.TYPE_EXTERNAL, new BigDecimal(333.22), "bic_ext_1", "iban_ext_1");
 	private BigDecimal amount = new BigDecimal(123.45);
-	private Transfer t12 = new Transfer(u2.getId(), u1.getId(), 0, "description 12", amount); 
+	private Transfer tInt21 = new Transfer(u2.getId(), u1.getId(), 0, "internal transfer from user 2 to user 1", amount); 
+	private Transfer tFromOutside1 = new Transfer(accountInt1, accountExt1, null, 0, "transfer from outside user 1", amount); 
+	private Transfer tToOutside1 = new Transfer(accountExt1, accountInt1, null, 0, "transfer to outside user 1", amount); 
 
 	@Autowired
 	TransferService transferService;
@@ -58,19 +61,20 @@ public class TransferServiceTest {
 		when(relationRepository.findById(any(RelationId.class))).thenReturn(Optional.of(r21));
 		when(accountService.operateTransfer(any(Account.class), eq(amount), eq(false))).thenReturn(accountInt1);
 		when(accountService.operateTransfer(any(Account.class), eq(amount), eq(true))).thenReturn(accountInt2);
-		when(transferRepository.save(eq(t12))).thenReturn(t12);
+		when(transferRepository.save(eq(tInt21))).thenReturn(tInt21);
 		// WHEN
-		Transfer t = transferService.transferInternal(t12);
+		Transfer t = transferService.transferInternal(tInt21);
 		// THEN
 		assertNotNull(t);
 		assertEquals(u1.getId(), t.getAccountDebit().getUserId().getId());
 		assertEquals(Account.TYPE_INTERNAL, t.getAccountDebit().getType());
 		assertEquals(u2.getId(), t.getAccountCredit().getUserId().getId());
 		assertEquals(Account.TYPE_INTERNAL, t.getAccountCredit().getType());
-		assertEquals(t12.getTransferId(), t.getTransferId());
-		assertEquals(t12.getDescription(), t.getDescription());
-		assertEquals(t12.getAmount(), t.getAmount());	
+		assertEquals(tInt21.getTransferId(), t.getTransferId());
+		assertEquals(tInt21.getDescription(), t.getDescription());
+		assertEquals(tInt21.getAmount(), t.getAmount());	
 	}
+
 	
 	@Test
 	void givenFriendWithoutRelation_transferInternal_throwsException() throws Exception
@@ -79,7 +83,49 @@ public class TransferServiceTest {
 		when(userService.getAuthenticatedUser()).thenReturn(u1);
 		// WHEN & THEN
 		assertThrows(TransferOutsideOfMyNetworkException.class, () ->
-			transferService.transferInternal(t12)
+			transferService.transferInternal(tInt21)
 		);
+	}
+
+	@Test
+	void givenExternalAccount_transferFromOutside_createsTransfer() throws Exception
+	{
+		// GIVEN
+		when(userService.getAuthenticatedUser()).thenReturn(u1);
+		when(accountService.operateTransfer(any(Account.class), eq(amount), eq(false))).thenReturn(accountExt1);
+		when(accountService.operateTransfer(any(Account.class), eq(amount), eq(true))).thenReturn(accountInt1);
+		when(transferRepository.save(eq(tFromOutside1))).thenReturn(tFromOutside1);
+		// WHEN
+		Transfer t = transferService.transferFromOutside(tFromOutside1);
+		// THEN
+		assertNotNull(t);
+		assertEquals(u1.getId(), t.getAccountDebit().getUserId().getId());
+		assertEquals(Account.TYPE_EXTERNAL, t.getAccountDebit().getType());
+		assertEquals(u1.getId(), t.getAccountCredit().getUserId().getId());
+		assertEquals(Account.TYPE_INTERNAL, t.getAccountCredit().getType());
+		assertEquals(tFromOutside1.getTransferId(), t.getTransferId());
+		assertEquals(tFromOutside1.getDescription(), t.getDescription());
+		assertEquals(tFromOutside1.getAmount(), t.getAmount());	
+	}
+	
+	@Test
+	void givenExternalAccount_transferToOutside_createsTransfer() throws Exception
+	{
+		// GIVEN
+		when(userService.getAuthenticatedUser()).thenReturn(u1);
+		when(accountService.operateTransfer(any(Account.class), eq(amount), eq(false))).thenReturn(accountInt1);
+		when(accountService.operateTransfer(any(Account.class), eq(amount), eq(true))).thenReturn(accountExt1);
+		when(transferRepository.save(eq(tToOutside1))).thenReturn(tToOutside1);
+		// WHEN
+		Transfer t = transferService.transferToOutside(tToOutside1);
+		// THEN
+		assertNotNull(t);
+		assertEquals(u1.getId(), t.getAccountDebit().getUserId().getId());
+		assertEquals(Account.TYPE_INTERNAL, t.getAccountDebit().getType());
+		assertEquals(u1.getId(), t.getAccountCredit().getUserId().getId());
+		assertEquals(Account.TYPE_EXTERNAL, t.getAccountCredit().getType());
+		assertEquals(tToOutside1.getTransferId(), t.getTransferId());
+		assertEquals(tToOutside1.getDescription(), t.getDescription());
+		assertEquals(tToOutside1.getAmount(), t.getAmount());	
 	}
 }

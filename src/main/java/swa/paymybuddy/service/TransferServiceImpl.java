@@ -43,8 +43,31 @@ public class TransferServiceImpl implements TransferService {
 		logger.info("transferInternal to " +  myFriendId + " of " + amount.doubleValue() + " " + transfer.getDescription());
 		Optional<Relation> relation = relationRepository.findById(new RelationId(myFriendId, myUserId));
 		if(relation.isEmpty()) throw new TransferOutsideOfMyNetworkException();
-//		transfer.setRelation(relation.get());
 		transfer.setAccountCredit(accountService.operateTransfer(new Account(myFriendId, Account.TYPE_INTERNAL), amount, true));
+		transfer.setAccountDebit(accountService.operateTransfer(new Account(myUserId, Account.TYPE_INTERNAL), amount, false));
+		return transferRepository.save(transfer);
+	}
+	
+	@Override
+	public Transfer transferFromOutside(Transfer transfer) 
+			throws 	InvalidTransferAmountException, NoAuthenticatedUserException, TransferAmountGreaterThanAccountBalanceException 
+	{
+		int myUserId = userService.getAuthenticatedUser().getId();
+		BigDecimal amount = transfer.getAmount();
+		logger.info("transferFromOutside of " + amount.doubleValue() + " " + transfer.getDescription());
+		transfer.setAccountCredit(accountService.operateTransfer(new Account(myUserId, Account.TYPE_INTERNAL), amount, true));
+		transfer.setAccountDebit(accountService.operateTransfer(new Account(myUserId, Account.TYPE_EXTERNAL), amount, false));
+		return transferRepository.save(transfer);
+	}
+	
+	@Override
+	public Transfer transferToOutside(Transfer transfer) 
+			throws 	InvalidTransferAmountException, NoAuthenticatedUserException, TransferAmountGreaterThanAccountBalanceException 
+	{
+		int myUserId = userService.getAuthenticatedUser().getId();
+		BigDecimal amount = transfer.getAmount();
+		logger.info("transferToOutside of " + amount.doubleValue() + " " + transfer.getDescription());
+		transfer.setAccountCredit(accountService.operateTransfer(new Account(myUserId, Account.TYPE_EXTERNAL), amount, true));
 		transfer.setAccountDebit(accountService.operateTransfer(new Account(myUserId, Account.TYPE_INTERNAL), amount, false));
 		return transferRepository.save(transfer);
 	}

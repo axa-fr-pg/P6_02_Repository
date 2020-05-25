@@ -41,6 +41,7 @@ public class TransferServiceIT {
 
 	@Autowired
 	private TransferService transferService;
+	
 	@Autowired
 	private WebApplicationContext context;
 	
@@ -57,7 +58,7 @@ public class TransferServiceIT {
 	}
 
 	@Test
-	public void givenAuthenticatedWithrelationAndBothAccounts_whenTransferInternal_thenTransferIsCreatedAndBalancesAreUpdated() throws Exception
+	public void givenAuthenticatedWithRelationAndBothAccounts_whenTransferInternal_thenTransferIsCreatedAndBalancesAreUpdated() throws Exception
 	{
 		// GIVEN
 		String myEmail = "email_1";
@@ -100,7 +101,7 @@ public class TransferServiceIT {
 	public void givenAuthenticatedWithoutAccount_whenTransferInternal_thenTransferIsNotCreated() throws Exception
 	{
 		// GIVEN
-		String myEmail = "email_1";
+		String myEmail = "email_2";
 		String description = "test transfer " + myEmail;
 		BigDecimal amount = new BigDecimal(12345.67);
 		User myUser = testService.loginAndReturnUser(mvc, myEmail);
@@ -115,4 +116,40 @@ public class TransferServiceIT {
 	    	transferService.transferInternal(transferRequest)
 	    );
 	}
+	
+	@Test
+	public void givenAuthenticatedWithBothAccounts_whenTransferFromOutside_thenTransferIsCreatedAndBalanceIsUpdated() throws Exception
+	{
+		// GIVEN
+		String myEmail = "email_3";
+		User myUser = testService.loginAndReturnUser(mvc, myEmail);
+		String description = "test transfer " + myEmail;
+		BigDecimal amount = new BigDecimal(12345.67);
+		BigDecimal myInternalBalance = new BigDecimal(111111.22);
+		BigDecimal myExternalBalance = new BigDecimal(33333.44);
+		assertNotNull(myUser);
+		Account accountDebit = accountRepository.save(new Account(myUser, Account.TYPE_EXTERNAL, myExternalBalance, "", ""));
+		assertNotNull(accountDebit);
+		Account accountCredit = accountRepository.save(new Account(myUser, Account.TYPE_INTERNAL, myInternalBalance, "", ""));
+		assertNotNull(accountCredit);
+		Transfer transferRequest = new Transfer(accountCredit, accountDebit, null, 0, description, amount);
+		// WHEN
+		Transfer transfer = transferService.transferFromOutside(transferRequest);
+		accountCredit = accountRepository.findById(new AccountId(myUser.getId(), Account.TYPE_INTERNAL)).get();
+		accountDebit = accountRepository.findById(new AccountId(myUser.getId(), Account.TYPE_INTERNAL)).get();
+		// THEN
+		assertNotNull(transfer);
+		assertEquals(myUser.getId(), transfer.getAccountDebit().getUserId().getId());
+		assertEquals(myUser.getId(), transfer.getAccountCredit().getUserId().getId());
+		assertEquals(amount, transfer.getAmount());
+		assertEquals(description, transfer.getDescription());
+		assertEquals(myUser.getId(), transfer.getAccountDebit().getUserId().getId());
+		assertEquals(myUser.getId(), transfer.getAccountCredit().getUserId().getId());
+		assertEquals(Account.TYPE_EXTERNAL, transfer.getAccountDebit().getType());
+		assertEquals(Account.TYPE_INTERNAL, transfer.getAccountCredit().getType());
+		assertEquals(description, transfer.getDescription());
+		assertEquals(amount, transfer.getAmount());
+		assertEquals(myInternalBalance.doubleValue(), accountCredit.getBalance().doubleValue() - amount.doubleValue(), 0.0000000000001);
+	}
+	
 } 

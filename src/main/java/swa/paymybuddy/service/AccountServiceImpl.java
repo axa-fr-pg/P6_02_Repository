@@ -40,7 +40,11 @@ public class AccountServiceImpl implements AccountService {
 		Optional<Account> accountInitial = accountRepository.findById(new AccountId(account.getUserId().getId(), account.getType()));
 		if (accountInitial.isEmpty()) return null;
 		logger.info("operateTransfer found account ");
-		account.setBalance(calculateBalanceAfterTransfer(accountInitial.get().getBalance(), amount, credit));
+		if (account.getType() == Account.TYPE_INTERNAL)
+		{	// manage balance only for internal accounts
+			account.setBalance(calculateBalanceAfterTransfer(accountInitial.get().getBalance(), amount, credit));
+		}
+		else account.setBalance(accountInitial.get().getBalance());
 		logger.info("new balance to be saved " + account.getBalance());
 		return accountRepository.save(account);
 	}
