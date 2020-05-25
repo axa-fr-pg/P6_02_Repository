@@ -31,8 +31,8 @@ public class Account {
 	
 	@Id
 	@ManyToOne
-    @JoinColumn(name = "user", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_USER"))
-    User user;
+    @JoinColumn(name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_user_id"))
+    User userId;
 	
 	@Id
 	@Column(columnDefinition = "TINYINT", nullable = true)
@@ -49,7 +49,7 @@ public class Account {
 
 	public Account(int userId, int accountType) // to create an empty account
 	{
-		user = new User(userId);
+		this.userId = new User(userId);
 		type = accountType;
 		balance = new BigDecimal(0);
 		bic = "";

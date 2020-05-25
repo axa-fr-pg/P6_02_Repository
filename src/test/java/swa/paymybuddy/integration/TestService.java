@@ -40,7 +40,7 @@ public class TestService
 
 	public void cleanAllTables()
 	{
-		transferRepository.deleteAll();
+		transferRepository.deleteAll();	
 		accountRepository.deleteAll();
 		relationRepository.deleteAll();
 		persistentLoginsRepository.deleteAll();

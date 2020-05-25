@@ -36,8 +36,8 @@ public class AccountServiceImpl implements AccountService {
 	public Account operateTransfer(Account account, BigDecimal amount, boolean credit) 
 			throws TransferAmountGreaterThanAccountBalanceException, InvalidTransferAmountException 
 	{
-		logger.info("operateTransfer " + account.getUser().getId() + " " + account.getType() + " " + amount.doubleValue() + " " + credit);
-		Optional<Account> accountInitial = accountRepository.findById(new AccountId(account.getUser().getId(), account.getType()));
+		logger.info("operateTransfer " + account.getUserId().getId() + " " + account.getType() + " " + amount.doubleValue() + " " + credit);
+		Optional<Account> accountInitial = accountRepository.findById(new AccountId(account.getUserId().getId(), account.getType()));
 		if (accountInitial.isEmpty()) return null;
 		logger.info("operateTransfer found account ");
 		account.setBalance(calculateBalanceAfterTransfer(accountInitial.get().getBalance(), amount, credit));

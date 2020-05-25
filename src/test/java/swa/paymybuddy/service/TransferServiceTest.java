@@ -63,9 +63,9 @@ public class TransferServiceTest {
 		Transfer t = transferService.transferInternal(t12);
 		// THEN
 		assertNotNull(t);
-		assertEquals(u1.getId(), t.getAccountDebit().getUser().getId());
+		assertEquals(u1.getId(), t.getAccountDebit().getUserId().getId());
 		assertEquals(Account.TYPE_INTERNAL, t.getAccountDebit().getType());
-		assertEquals(u2.getId(), t.getAccountCredit().getUser().getId());
+		assertEquals(u2.getId(), t.getAccountCredit().getUserId().getId());
 		assertEquals(Account.TYPE_INTERNAL, t.getAccountCredit().getType());
 		assertEquals(t12.getTransferId(), t.getTransferId());
 		assertEquals(t12.getDescription(), t.getDescription());

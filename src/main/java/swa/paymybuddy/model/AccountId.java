@@ -13,6 +13,6 @@ import lombok.Setter;
 public class AccountId implements Serializable {
 
 	private static final long serialVersionUID = -6431851748755572351L;
-	int user;
+	int userId;
 	int type;
 }

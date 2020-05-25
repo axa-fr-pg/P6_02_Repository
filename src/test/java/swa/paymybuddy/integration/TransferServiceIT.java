@@ -82,12 +82,12 @@ public class TransferServiceIT {
 		accountDebit = accountRepository.findById(new AccountId(myUser.getId(), Account.TYPE_INTERNAL)).get();
 		// THEN
 		assertNotNull(transfer);
-		assertEquals(myUser.getId(), transfer.getAccountDebit().getUser().getId());
-		assertEquals(myFriendUser.getId(), transfer.getAccountCredit().getUser().getId());
+		assertEquals(myUser.getId(), transfer.getAccountDebit().getUserId().getId());
+		assertEquals(myFriendUser.getId(), transfer.getAccountCredit().getUserId().getId());
 		assertEquals(amount, transfer.getAmount());
 		assertEquals(description, transfer.getDescription());
-		assertEquals(myUser.getId(), transfer.getAccountDebit().getUser().getId());
-		assertEquals(myFriendUser.getId(), transfer.getAccountCredit().getUser().getId());
+		assertEquals(myUser.getId(), transfer.getAccountDebit().getUserId().getId());
+		assertEquals(myFriendUser.getId(), transfer.getAccountCredit().getUserId().getId());
 		assertEquals(Account.TYPE_INTERNAL, transfer.getAccountDebit().getType());
 		assertEquals(Account.TYPE_INTERNAL, transfer.getAccountCredit().getType());
 		assertEquals(description, transfer.getDescription());

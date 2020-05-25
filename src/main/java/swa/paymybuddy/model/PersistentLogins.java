@@ -23,7 +23,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(indexes = { @Index(name = "username_index", columnList = "username") })
+@Table(indexes = { @Index(name = "email_index", columnList = "username") })
 public class PersistentLogins {
 
 	@Id

@@ -62,7 +62,7 @@ public class AccountServiceIT {
 		Account account = accountService.operateTransfer(myFriendAccount, amountCredit, true);
 		// THEN
 		assertNotNull(account);
-		assertEquals(myFriend.getId(), account.getUser().getId());
+		assertEquals(myFriend.getId(), account.getUserId().getId());
 		assertEquals(Account.TYPE_INTERNAL, account.getType());
 		assertEquals(balanceInitial.doubleValue(), account.getBalance().doubleValue() - amountCredit.doubleValue(), 0.0000000000001);
 		assertEquals("", account.getBic());
@@ -82,7 +82,7 @@ public class AccountServiceIT {
 		Account account = accountService.operateTransfer(myFriendAccount, amountCredit, false);
 		// THEN
 		assertNotNull(account);
-		assertEquals(myFriend.getId(), account.getUser().getId());
+		assertEquals(myFriend.getId(), account.getUserId().getId());
 		assertEquals(Account.TYPE_INTERNAL, account.getType());
 		assertEquals(balanceInitial.doubleValue(), account.getBalance().doubleValue() + amountCredit.doubleValue(), 0.0000000000001);
 		assertEquals("", account.getBic());

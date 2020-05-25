@@ -38,7 +38,7 @@ public class TransferServiceImpl implements TransferService {
 					InvalidTransferAmountException, NoAuthenticatedUserException 
 	{
 		int myUserId = userService.getAuthenticatedUser().getId();
-		int myFriendId = transfer.getAccountCredit().getUser().getId();
+		int myFriendId = transfer.getAccountCredit().getUserId().getId();
 		BigDecimal amount = transfer.getAmount();
 		logger.info("transferInternal to " +  myFriendId + " of " + amount.doubleValue() + " " + transfer.getDescription());
 		Optional<Relation> relation = relationRepository.findById(new RelationId(myFriendId, myUserId));
