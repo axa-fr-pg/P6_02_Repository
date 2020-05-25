@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
@@ -19,11 +20,11 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @Entity
+@Table(indexes = { @Index(name = "FK_username", columnList = "username") })
 @FieldDefaults(level=AccessLevel.PRIVATE)
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(indexes = { @Index(name = "email_index", columnList = "username") })
 public class PersistentLogins {
 
 	@Id
@@ -31,7 +32,7 @@ public class PersistentLogins {
 	String series;
 
 	@ManyToOne
-    @JoinColumn(name = "username", referencedColumnName = "email")
+    @JoinColumn(name = "username", referencedColumnName = "email", foreignKey = @ForeignKey(name = "FK_email"))
 	User username;
 
 	@Column(length = 64)

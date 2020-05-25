@@ -43,7 +43,7 @@ public class TransferServiceImpl implements TransferService {
 		logger.info("transferInternal to " +  myFriendId + " of " + amount.doubleValue() + " " + transfer.getDescription());
 		Optional<Relation> relation = relationRepository.findById(new RelationId(myFriendId, myUserId));
 		if(relation.isEmpty()) throw new TransferOutsideOfMyNetworkException();
-		transfer.setRelation(relation.get());
+//		transfer.setRelation(relation.get());
 		transfer.setAccountCredit(accountService.operateTransfer(new Account(myFriendId, Account.TYPE_INTERNAL), amount, true));
 		transfer.setAccountDebit(accountService.operateTransfer(new Account(myUserId, Account.TYPE_INTERNAL), amount, false));
 		return transferRepository.save(transfer);

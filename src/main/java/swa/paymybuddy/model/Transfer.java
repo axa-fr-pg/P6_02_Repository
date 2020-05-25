@@ -8,12 +8,12 @@ import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
-
-import org.hibernate.annotations.GenericGenerator;
+import javax.persistence.Table;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,6 +23,14 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @Entity
+@Table( indexes = { // Indexes specified explicitly because JPA misses some indexes when joining columns with foreign keys
+		@Index(name = "FK_account_credit",  columnList="account_credit_user_id, account_credit_type", unique = true),
+		/* 
+		 * For some reason the following line would create a duplicate : JPA bug to be checked in a future release
+		   @Index(name = "FK_account_debit",  columnList="account_debit_user_id, account_debit_type", unique = true), 
+		 */
+		@Index(name = "FK_relation",  columnList="account_credit_user_id,account_debit_user_id", unique = true)
+})
 @FieldDefaults(level=AccessLevel.PRIVATE)
 @Getter
 @Setter
@@ -46,12 +54,12 @@ public class Transfer {
 	@Id
 	@ManyToOne
     @JoinColumns(
-        	foreignKey = @ForeignKey(name = "FK_account_debit"),
-        	value = {
-    	        @JoinColumn(name="account_debit_user_id", referencedColumnName="user_id"),
-    	        @JoinColumn(name="account_debit_type", referencedColumnName="type", columnDefinition = "TINYINT")
-    	    }
-        )
+		foreignKey = @ForeignKey(name = "FK_account_debit"),
+    	value = {
+	        @JoinColumn(name="account_debit_user_id", referencedColumnName="user_id"),
+	        @JoinColumn(name="account_debit_type", referencedColumnName="type", columnDefinition = "TINYINT")
+	    }
+	)
 	Account accountDebit;
 
 	@ManyToOne
@@ -78,7 +86,6 @@ public class Transfer {
 	{
 		this.accountCredit = new Account(userCreditId, accountType);
 		this.accountDebit = new Account(userDebitId, accountType);;
-		this.relation = new Relation(userCreditId, userDebitId);
 		this.description = description;
 		this.amount = amount;
 	}

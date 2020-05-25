@@ -33,7 +33,7 @@ public class TransferServiceTest {
 	private Account accountInt1 = new Account(u1, Account.TYPE_INTERNAL, new BigDecimal(11111.1), "bic_1", "iban_1");
 	private Account accountInt2 = new Account(u2, Account.TYPE_INTERNAL, new BigDecimal(22.22), "bic_2", "iban_2");
 	private BigDecimal amount = new BigDecimal(123.45);
-	private Transfer t12 = new Transfer(accountInt2, accountInt1, r21, 0, "description 12", amount); 
+	private Transfer t12 = new Transfer(u2.getId(), u1.getId(), 0, "description 12", amount); 
 
 	@Autowired
 	TransferService transferService;
