@@ -62,7 +62,7 @@ public class Transfer {
 	)
 	Account accountDebit;
 
-	@ManyToOne
+/*	@ManyToOne
     @JoinColumns(
     	foreignKey = @ForeignKey(name = "FK_relation"),
     	value = {
@@ -70,7 +70,7 @@ public class Transfer {
 	        @JoinColumn(name="account_debit_user_id", referencedColumnName="user_debit_id", insertable = false, updatable = false)
     	}
     )
-	Relation relation;
+	Relation relation;*/
 	
 	@Id
 	@GeneratedValue(generator="transferSequence") // IDENTITY can't be used here due to composite primary key
