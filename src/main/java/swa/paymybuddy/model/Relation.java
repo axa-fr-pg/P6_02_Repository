@@ -18,8 +18,8 @@ import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table( indexes = { // Indexes specified explicitly because JPA misses some indexes when joining columns with foreign keys
-		@Index(name = "IFK_user_credit_id",  columnList="user_credit_id", unique = true),
-		@Index(name = "IFK_user_debit_id",  columnList="user_debit_id", unique = true)
+		@Index(name = "IFK_user_credit_id",  columnList="user_credit_id", unique = false),
+		@Index(name = "IFK_user_debit_id",  columnList="user_debit_id", unique = false)
 	})
 @FieldDefaults(level=AccessLevel.PRIVATE)
 @Getter

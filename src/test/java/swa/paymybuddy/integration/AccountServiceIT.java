@@ -19,7 +19,7 @@ import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.AccountRepository;
 import swa.paymybuddy.repository.UserRepository;
 import swa.paymybuddy.service.AccountService;
-import swa.paymybuddy.service.TransferAmountGreaterThanAccountBalanceException;
+import swa.paymybuddy.service.exception.TransferAmountGreaterThanAccountBalanceException;
 
 @SpringBootTest
 public class AccountServiceIT {

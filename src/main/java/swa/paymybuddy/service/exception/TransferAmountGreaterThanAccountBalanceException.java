@@ -1,4 +1,4 @@
-package swa.paymybuddy.service;
+package swa.paymybuddy.service.exception;
 
 public class TransferAmountGreaterThanAccountBalanceException extends Exception {
 

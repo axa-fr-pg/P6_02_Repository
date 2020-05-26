@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import swa.paymybuddy.model.Relation;
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.RelationRepository;
+import swa.paymybuddy.service.exception.IllegalOperationOnMyOwnUserException;
 
 @SpringBootTest
 public class RelationServiceTest 
@@ -27,8 +28,8 @@ public class RelationServiceTest
 	@MockBean
 	private RelationRepository relationRepository;
 
-	@Autowired
-	private RelationService relationService;
+	@Autowired // Autowiring the implementation instead of the interface to test protected methods
+	private RelationServiceImpl relationService; 
 	
 	@MockBean
 	UserService userService;

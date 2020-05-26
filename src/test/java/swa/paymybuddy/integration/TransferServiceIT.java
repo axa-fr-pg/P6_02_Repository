@@ -2,6 +2,7 @@ package swa.paymybuddy.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
@@ -128,7 +129,7 @@ public class TransferServiceIT {
 		assertNotNull(accountDebit);
 		Account accountCredit = accountRepository.save(new Account(myUser, Account.TYPE_INTERNAL, myInternalBalance, "", ""));
 		assertNotNull(accountCredit);
-		Transfer transferRequest = new Transfer(accountCredit, accountDebit, 0, description, amount);
+		Transfer transferRequest = new Transfer(accountCredit, accountDebit, null, 0, description, amount);
 		// WHEN
 		Transfer transfer = transferService.transferFromOutside(transferRequest);
 		accountCredit = accountRepository.findById(new AccountId(myUser.getId(), Account.TYPE_INTERNAL)).get();
@@ -158,7 +159,7 @@ public class TransferServiceIT {
 		assertNotNull(accountDebit);
 		Account accountCredit = accountRepository.save(new Account(myUser, Account.TYPE_EXTERNAL, myExternalBalance, "", ""));
 		assertNotNull(accountCredit);
-		Transfer transferRequest = new Transfer(accountCredit, accountDebit, 0, description, amount);
+		Transfer transferRequest = new Transfer(accountCredit, accountDebit, null, 0, description, amount);
 		// WHEN
 		Transfer transfer = transferService.transferToOutside(transferRequest);
 		accountDebit = accountRepository.findById(new AccountId(myUser.getId(), Account.TYPE_INTERNAL)).get();
@@ -171,5 +172,31 @@ public class TransferServiceIT {
 		assertEquals(Account.TYPE_INTERNAL, transfer.getAccountDebit().getType());
 		assertEquals(Account.TYPE_EXTERNAL, transfer.getAccountCredit().getType());
 		assertEquals(myInternalBalance.doubleValue(), accountDebit.getBalance().doubleValue() + amount.doubleValue(), 0.0000000000001);
+	}
+	
+	@Test
+	public void givenMissingAccountForDebit_whenTransferInternal_thenTransactionIsRolledBack() throws Exception
+	{
+		// GIVEN
+		String myEmail = "email_5";
+		User myUser = testService.loginAndReturnUser(mvc, myEmail);
+		String description = "test transfer " + myEmail;
+		BigDecimal amount = new BigDecimal(12345.67);
+		BigDecimal myFriendBalance = new BigDecimal(33333.44);
+		assertNotNull(myUser);
+		User myFriendUser = userRepository.save(new User(0, 0, myEmail+"_friend", "not_used"));
+		assertNotNull(myFriendUser);
+		Relation relation = new Relation(myFriendUser.getId(), myUser.getId());
+		relationRepository.save(relation);
+		Account accountCredit = accountRepository.save(new Account(myFriendUser, Account.TYPE_INTERNAL, myFriendBalance, "", ""));
+		assertNotNull(accountCredit);
+		Transfer transferRequest = new Transfer(myFriendUser.getId(), myUser.getId(), Account.TYPE_INTERNAL, description, amount);
+		// WHEN
+		Transfer transfer = transferRequest;
+		try { transfer = transferService.transferInternal(transferRequest); } catch (Exception e) {}
+		accountCredit = accountRepository.findById(new AccountId(myFriendUser.getId(), Account.TYPE_INTERNAL)).get();
+		// THEN
+		assertNull(transfer.getAccountDebit());
+		assertEquals(myFriendBalance.doubleValue(), accountCredit.getBalance().doubleValue(), 0.0000000000001);
 	}
 } 

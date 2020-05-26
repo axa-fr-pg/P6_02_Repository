@@ -40,11 +40,11 @@ public class TestService
 
 	public void cleanAllTables()
 	{
-		transferRepository.deleteAll();	
-		accountRepository.deleteAll();
-		relationRepository.deleteAll();
-		persistentLoginsRepository.deleteAll();
-		userRepository.deleteAll();
+		transferRepository.deleteAllInBatch();
+		accountRepository.deleteAllInBatch();
+		relationRepository.deleteAllInBatch();
+		persistentLoginsRepository.deleteAllInBatch();
+		userRepository.deleteAllInBatch();
 	}
 	
 	public User loginAndReturnUser(MockMvc mvc, String email) throws Exception

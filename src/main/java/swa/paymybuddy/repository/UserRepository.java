@@ -1,9 +1,11 @@
 package swa.paymybuddy.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import swa.paymybuddy.model.User;
 
-public interface UserRepository extends CrudRepository<User, Integer> {
+@Transactional
+public interface UserRepository extends JpaRepository<User, Integer> {
 
 }

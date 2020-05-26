@@ -1,4 +1,4 @@
-package swa.paymybuddy.security;
+package swa.paymybuddy.config;
 
 import java.util.ArrayList;
 import java.util.List;

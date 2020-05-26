@@ -7,12 +7,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import swa.paymybuddy.model.Account;
 import swa.paymybuddy.model.AccountId;
 import swa.paymybuddy.repository.AccountRepository;
+import swa.paymybuddy.service.exception.InvalidTransferAmountException;
+import swa.paymybuddy.service.exception.TransferAmountGreaterThanAccountBalanceException;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class AccountServiceImpl implements AccountService {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);

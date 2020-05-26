@@ -1,6 +1,8 @@
 package swa.paymybuddy.service;
 
 import swa.paymybuddy.model.User;
+import swa.paymybuddy.service.exception.InvalidSocialNetworkCodeException;
+import swa.paymybuddy.service.exception.NoAuthenticatedUserException;
 
 public interface UserService {
 	

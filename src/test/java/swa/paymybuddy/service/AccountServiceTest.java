@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import swa.paymybuddy.model.Account;
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.AccountRepository;
+import swa.paymybuddy.service.exception.InvalidTransferAmountException;
+import swa.paymybuddy.service.exception.TransferAmountGreaterThanAccountBalanceException;
 
 @SpringBootTest
 public class AccountServiceTest 

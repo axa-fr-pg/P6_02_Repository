@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,6 +15,7 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.ConstraintMode;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,12 +26,12 @@ import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table( indexes = { // Indexes specified explicitly because JPA misses some indexes when joining columns with foreign keys
-		@Index(name = "FK_account_credit",  columnList="account_credit_user_id, account_credit_type", unique = true),
+		@Index(name = "FK_account_credit",  columnList="account_credit_user_id, account_credit_type", unique = false),
 		/* 
 		 * For some reason the following line would create a duplicate : JPA bug to be checked in a future release
-		   @Index(name = "FK_account_debit",  columnList="account_debit_user_id, account_debit_type", unique = true), 
+		   @Index(name = "FK_account_debit",  columnList="account_debit_user_id, account_debit_type", unique = false), 
 		 */
-		@Index(name = "FK_relation",  columnList="account_credit_user_id,account_debit_user_id", unique = true)
+		@Index(name = "FK_relation",  columnList="account_credit_user_id,account_debit_user_id", unique = false)
 })
 @FieldDefaults(level=AccessLevel.PRIVATE)
 @Getter
@@ -62,15 +64,15 @@ public class Transfer {
 	)
 	Account accountDebit;
 
-/*	@ManyToOne
+	@ManyToOne(optional=true, fetch=FetchType.LAZY) // No relations for external transfers
     @JoinColumns(
-    	foreignKey = @ForeignKey(name = "FK_relation"),
+    	foreignKey = @ForeignKey(value=ConstraintMode.NO_CONSTRAINT, name="FK_relation"),
     	value = {
-	        @JoinColumn(name="account_credit_user_id", referencedColumnName="user_credit_id", insertable = false, updatable = false),
-	        @JoinColumn(name="account_debit_user_id", referencedColumnName="user_debit_id", insertable = false, updatable = false)
+	        @JoinColumn(name="account_credit_user_id", referencedColumnName="user_credit_id", insertable = false, updatable = false, nullable=true),
+	        @JoinColumn(name="account_debit_user_id", referencedColumnName="user_debit_id", insertable = false, updatable = false, nullable=true)
     	}
     )
-	Relation relation;*/
+	Relation relation;
 	
 	@Id
 	@GeneratedValue(generator="transferSequence") // IDENTITY can't be used here due to composite primary key

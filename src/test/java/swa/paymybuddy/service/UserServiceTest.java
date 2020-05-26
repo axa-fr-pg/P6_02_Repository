@@ -17,6 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.UserRepository;
+import swa.paymybuddy.service.exception.InvalidSocialNetworkCodeException;
+import swa.paymybuddy.service.exception.NoAuthenticatedUserException;
 
 @SpringBootTest
 public class UserServiceTest 

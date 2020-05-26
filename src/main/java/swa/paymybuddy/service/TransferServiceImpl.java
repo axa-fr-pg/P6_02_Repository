@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import swa.paymybuddy.model.Account;
 import swa.paymybuddy.model.Relation;
@@ -14,8 +15,13 @@ import swa.paymybuddy.model.RelationId;
 import swa.paymybuddy.model.Transfer;
 import swa.paymybuddy.repository.RelationRepository;
 import swa.paymybuddy.repository.TransferRepository;
+import swa.paymybuddy.service.exception.InvalidTransferAmountException;
+import swa.paymybuddy.service.exception.NoAuthenticatedUserException;
+import swa.paymybuddy.service.exception.TransferAmountGreaterThanAccountBalanceException;
+import swa.paymybuddy.service.exception.TransferOutsideOfMyNetworkException;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class TransferServiceImpl implements TransferService {
 
     private static final Logger logger = LoggerFactory.getLogger(TransferServiceImpl.class);

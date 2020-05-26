@@ -1,10 +1,12 @@
 package swa.paymybuddy.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import swa.paymybuddy.model.Transfer;
 import swa.paymybuddy.model.TransferId;
 
-public interface TransferRepository extends CrudRepository<Transfer, TransferId> {
+@Transactional
+public interface TransferRepository extends JpaRepository<Transfer, TransferId> {
 
 }

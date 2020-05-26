@@ -23,6 +23,7 @@ import swa.paymybuddy.model.Transfer;
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.RelationRepository;
 import swa.paymybuddy.repository.TransferRepository;
+import swa.paymybuddy.service.exception.TransferOutsideOfMyNetworkException;
 
 @SpringBootTest
 public class TransferServiceTest {
@@ -35,8 +36,8 @@ public class TransferServiceTest {
 	private Account accountExt1 = new Account(u1, Account.TYPE_EXTERNAL, new BigDecimal(333.22), "bic_ext_1", "iban_ext_1");
 	private BigDecimal amount = new BigDecimal(123.45);
 	private Transfer tInt21 = new Transfer(u2.getId(), u1.getId(), 0, "internal transfer from user 2 to user 1", amount); 
-	private Transfer tFromOutside1 = new Transfer(accountInt1, accountExt1, 0, "transfer from outside user 1", amount); 
-	private Transfer tToOutside1 = new Transfer(accountExt1, accountInt1, 0, "transfer to outside user 1", amount); 
+	private Transfer tFromOutside1 = new Transfer(accountInt1, accountExt1, null, 0, "transfer from outside user 1", amount); 
+	private Transfer tToOutside1 = new Transfer(accountExt1, accountInt1, null, 0, "transfer to outside user 1", amount); 
 
 	@Autowired
 	TransferService transferService;

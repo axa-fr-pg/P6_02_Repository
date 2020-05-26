@@ -3,6 +3,7 @@ package swa.paymybuddy.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
@@ -20,17 +21,19 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import swa.paymybuddy.model.Relation;
 import swa.paymybuddy.model.RelationId;
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.RelationRepository;
 import swa.paymybuddy.repository.UserRepository;
-import swa.paymybuddy.service.NoAuthenticatedUserException;
 import swa.paymybuddy.service.RelationService;
+import swa.paymybuddy.service.exception.NoAuthenticatedUserException;
 
 @SpringBootTest
 public class RelationServiceIT {
 
 	private String passwordClear = "password";
+	
 	@Autowired
 	private RelationRepository relationRepository;
 
@@ -88,5 +91,25 @@ public class RelationServiceIT {
 		assertThrows(NoAuthenticatedUserException.class, () ->
 			relationService.addUserToMyNetwork(999)
 		);
+	}
+	
+	@Test
+	public void givenExistingRelation_whenAddToMyNetwork_thenTransactionIsRolledBack() throws Exception
+	{
+		// GIVEN
+		String myEmail = "email_2";
+		int myUserId = testService.loginAndReturnUser(mvc, myEmail).getId();
+		int myFriendId = userRepository.save(new User(0, 0, myEmail+"_friend", "not_used")).getId();
+		SecurityContext securityContext = (SecurityContext) mvc
+				.perform(formLogin("/login").user(myEmail).password(passwordClear))
+				.andExpect(authenticated())
+				.andReturn().getRequest().getSession()
+				.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+		SecurityContextHolder.setContext(securityContext);
+		relationRepository.save(new Relation(myUserId, myFriendId));
+		// WHEN  
+		try { relationService.addUserToMyNetwork(myFriendId); } catch (Exception e) { }
+		// THEN
+		assertTrue(relationRepository.findById(new RelationId(myFriendId, myUserId)).isEmpty());
 	}
 }
