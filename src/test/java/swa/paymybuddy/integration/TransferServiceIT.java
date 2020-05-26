@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,10 @@ import swa.paymybuddy.model.Transfer;
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.AccountRepository;
 import swa.paymybuddy.repository.RelationRepository;
+import swa.paymybuddy.repository.TransferRepository;
 import swa.paymybuddy.repository.UserRepository;
 import swa.paymybuddy.service.TransferService;
+import swa.paymybuddy.service.UserService;
 
 @SpringBootTest
 public class TransferServiceIT {
@@ -38,10 +41,16 @@ public class TransferServiceIT {
     private UserRepository userRepository;
 
 	@Autowired
+	private UserService userService;
+	
+	@Autowired
 	private TestService testService;
 
 	@Autowired
 	private TransferService transferService;
+	
+	@Autowired
+	private TransferRepository transferRepository;
 	
 	@Autowired
 	private WebApplicationContext context;
@@ -56,16 +65,18 @@ public class TransferServiceIT {
 	{
 		testService.cleanAllTables();
 		mvc = MockMvcBuilders.webAppContextSetup(context).addFilters(springSecurityFilterChain).build();
+		testService.createCommissionUserAndAccount();
 	}
 
 	@Test
-	public void givenAuthenticatedWithRelationAndBothAccounts_whenTransferInternal_thenTransferIsCreatedAndBalancesAreUpdated() throws Exception
+	public void givenAllPrerequisites_whenTransferInternal_thenTransferIsCreatedAndBalancesAreUpdated() throws Exception
 	{
 		// GIVEN
 		String myEmail = "email_1";
 		User myUser = testService.loginAndReturnUser(mvc, myEmail);
 		String description = "test transfer " + myEmail;
-		BigDecimal amount = new BigDecimal(12345.67);
+		BigDecimal amount = new BigDecimal(2000.00);
+		BigDecimal comAmount = new BigDecimal(amount.doubleValue() / 200.0);
 		BigDecimal myBalance = new BigDecimal(111111.22);
 		BigDecimal myFriendBalance = new BigDecimal(33333.44);
 		assertNotNull(myUser);
@@ -82,16 +93,20 @@ public class TransferServiceIT {
 		Transfer transfer = transferService.transferInternal(transferRequest);
 		accountCredit = accountRepository.findById(new AccountId(myFriendUser.getId(), Account.TYPE_INTERNAL)).get();
 		accountDebit = accountRepository.findById(new AccountId(myUser.getId(), Account.TYPE_INTERNAL)).get();
+		int transferCount = transferRepository.findAll().size();
+		Account accountCom = accountRepository.findById(new AccountId(userService.getCommissionUserId(), Account.TYPE_INTERNAL)).get();
 		// THEN
 		assertNotNull(transfer);
+		assertEquals(2, transferCount);
 		assertEquals(myUser.getId(), transfer.getAccountDebit().getUserId().getId());
 		assertEquals(myFriendUser.getId(), transfer.getAccountCredit().getUserId().getId());
 		assertEquals(amount, transfer.getAmount());
 		assertEquals(description, transfer.getDescription());
 		assertEquals(Account.TYPE_INTERNAL, transfer.getAccountDebit().getType());
 		assertEquals(Account.TYPE_INTERNAL, transfer.getAccountCredit().getType());
-		assertEquals(myBalance.doubleValue(), accountDebit.getBalance().doubleValue() + amount.doubleValue(), 0.0000000000001);
+		assertEquals(myBalance.doubleValue(), accountDebit.getBalance().add(amount).add(comAmount).doubleValue(), 0.0000000000001);
 		assertEquals(myFriendBalance.doubleValue(), accountCredit.getBalance().doubleValue() - amount.doubleValue(), 0.0000000000001);
+		assertEquals(comAmount.doubleValue(), accountCom.getBalance().doubleValue(), 0.0000000000001);
 	}
 	
 	@Test
@@ -115,13 +130,14 @@ public class TransferServiceIT {
 	}
 	
 	@Test
-	public void givenAuthenticatedWithBothAccounts_whenTransferFromOutside_thenTransferIsCreatedAndBalanceIsUpdated() throws Exception
+	public void givenAllPrerequisites_whenTransferFromOutside_thenTransferIsCreatedAndBalanceIsUpdated() throws Exception
 	{
 		// GIVEN
 		String myEmail = "email_3";
 		User myUser = testService.loginAndReturnUser(mvc, myEmail);
 		String description = "test transfer " + myEmail;
-		BigDecimal amount = new BigDecimal(12345.67);
+		BigDecimal amount = new BigDecimal(200000.000);
+		BigDecimal comAmount = new BigDecimal(amount.doubleValue() / 200.0);
 		BigDecimal myInternalBalance = new BigDecimal(111111.22);
 		BigDecimal myExternalBalance = new BigDecimal(33333.44);
 		assertNotNull(myUser);
@@ -133,6 +149,7 @@ public class TransferServiceIT {
 		// WHEN
 		Transfer transfer = transferService.transferFromOutside(transferRequest);
 		accountCredit = accountRepository.findById(new AccountId(myUser.getId(), Account.TYPE_INTERNAL)).get();
+		Account accountCom = accountRepository.findById(new AccountId(userService.getCommissionUserId(), Account.TYPE_INTERNAL)).get();
 		// THEN
 		assertNotNull(transfer);
 		assertEquals(myUser.getId(), transfer.getAccountDebit().getUserId().getId());
@@ -141,17 +158,20 @@ public class TransferServiceIT {
 		assertEquals(description, transfer.getDescription());
 		assertEquals(Account.TYPE_EXTERNAL, transfer.getAccountDebit().getType());
 		assertEquals(Account.TYPE_INTERNAL, transfer.getAccountCredit().getType());
-		assertEquals(myInternalBalance.doubleValue(), accountCredit.getBalance().doubleValue() - amount.doubleValue(), 0.0000000000001);
+		assertEquals(myInternalBalance.doubleValue(), 
+				accountCredit.getBalance().subtract(amount).add(comAmount).doubleValue(), 0.0000000000001);
+		assertEquals(comAmount.doubleValue(), accountCom.getBalance().doubleValue(), 0.0000000000001);
 	}
 	
 	@Test
-	public void givenAuthenticatedWithBothAccounts_whenTransferToOutside_thenTransferIsCreatedAndBalanceIsUpdated() throws Exception
+	public void givenAllPrerequisites_whenTransferToOutside_thenTransferIsCreatedAndBalanceIsUpdated() throws Exception
 	{
 		// GIVEN
 		String myEmail = "email_4";
 		User myUser = testService.loginAndReturnUser(mvc, myEmail);
 		String description = "test transfer " + myEmail;
-		BigDecimal amount = new BigDecimal(12345.67);
+		BigDecimal amount = new BigDecimal(20000.00);
+		BigDecimal comAmount = new BigDecimal(amount.doubleValue() / 200.0);
 		BigDecimal myInternalBalance = new BigDecimal(111111.22);
 		BigDecimal myExternalBalance = new BigDecimal(33333.44);
 		assertNotNull(myUser);
@@ -163,6 +183,7 @@ public class TransferServiceIT {
 		// WHEN
 		Transfer transfer = transferService.transferToOutside(transferRequest);
 		accountDebit = accountRepository.findById(new AccountId(myUser.getId(), Account.TYPE_INTERNAL)).get();
+		Account accountCom = accountRepository.findById(new AccountId(userService.getCommissionUserId(), Account.TYPE_INTERNAL)).get();
 		// THEN
 		assertNotNull(transfer);
 		assertEquals(myUser.getId(), transfer.getAccountDebit().getUserId().getId());
@@ -171,7 +192,8 @@ public class TransferServiceIT {
 		assertEquals(description, transfer.getDescription());
 		assertEquals(Account.TYPE_INTERNAL, transfer.getAccountDebit().getType());
 		assertEquals(Account.TYPE_EXTERNAL, transfer.getAccountCredit().getType());
-		assertEquals(myInternalBalance.doubleValue(), accountDebit.getBalance().doubleValue() + amount.doubleValue(), 0.0000000000001);
+		assertEquals(myInternalBalance.doubleValue(), accountDebit.getBalance().add(amount).add(comAmount).doubleValue(), 0.0000000000001);
+		assertEquals(comAmount.doubleValue(), accountCom.getBalance().doubleValue(), 0.0000000000001);
 	}
 	
 	@Test
@@ -198,5 +220,46 @@ public class TransferServiceIT {
 		// THEN
 		assertNull(transfer.getAccountDebit());
 		assertEquals(myFriendBalance.doubleValue(), accountCredit.getBalance().doubleValue(), 0.0000000000001);
+	}
+	
+	@Test
+	public void givenTransfersByMyFriendAndByMyself_getMyTransferList_returnsOnlyMyTransfers() throws Exception
+	{
+		// GIVEN
+		String myEmail = "email_6";
+		User myUser = testService.loginAndReturnUser(mvc, myEmail);
+		BigDecimal amount = new BigDecimal(12345.67);
+		BigDecimal myBalance = new BigDecimal(111111.22);
+		BigDecimal myFriendBalance = new BigDecimal(33333.44);
+		assertNotNull(myUser);
+		User myFriendUser = userRepository.save(new User(0, 0, myEmail+"_friend", "not_used"));
+		assertNotNull(myFriendUser);
+		Relation relation = new Relation(myFriendUser.getId(), myUser.getId());
+		relationRepository.save(relation);
+		Account myAccountInternal = accountRepository.save(new Account(myUser, Account.TYPE_INTERNAL, myBalance, "", ""));
+		assertNotNull(myAccountInternal);
+		Account myAccountExternal = accountRepository.save(new Account(myUser, Account.TYPE_EXTERNAL, myBalance, "", ""));
+		assertNotNull(myAccountExternal);
+		Account myFriendAccount = accountRepository.save(new Account(myFriendUser, Account.TYPE_INTERNAL, myFriendBalance, "", ""));
+		assertNotNull(myFriendAccount);
+		String description1 = "test transfer " + myEmail + " 1";
+		String description2 = "test transfer " + myEmail + " 2";
+		String description3 = "test transfer " + myEmail + " 3";
+		transferRepository.save(new Transfer(myFriendAccount, myAccountInternal, null, 0, description1, amount));
+		transferRepository.save(new Transfer(myAccountInternal, myFriendAccount, null, 0, "this one belongs my friend", amount));
+		transferRepository.save(new Transfer(myFriendAccount, myAccountExternal, null, 0, description2, amount));
+		transferRepository.save(new Transfer(myFriendAccount, myAccountInternal, null, 0, description3, amount));
+		// WHEN
+		ArrayList<Transfer> myTransferList = transferService.getMyTransferList();
+		// THEN
+		assertNotNull(myTransferList);
+		assertEquals(3, myTransferList.size());
+		int counter = 0;
+		for (Transfer t : myTransferList) {
+			if (t.getDescription().equals(description1)) counter += 1;
+			if (t.getDescription().equals(description2)) counter += 10;
+			if (t.getDescription().equals(description3)) counter += 100;
+		}
+		assertEquals(111, counter);
 	}
 } 

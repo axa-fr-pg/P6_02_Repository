@@ -14,6 +14,7 @@ import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.UserRepository;
 import swa.paymybuddy.service.exception.InvalidSocialNetworkCodeException;
 import swa.paymybuddy.service.exception.NoAuthenticatedUserException;
+import swa.paymybuddy.service.exception.NoCommissionUserException;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -45,6 +46,15 @@ public class UserServiceImpl implements UserService {
 		Authentication authentication = context.getAuthentication();
 		if (authentication == null) throw new NoAuthenticatedUserException();
 		return getUserByEmail(authentication.getName());
+	}
+
+	@Override
+	public int getCommissionUserId() throws NoCommissionUserException
+	{
+		logger.info("getCommissionUser ");
+		User user = getUserByEmail(User.EMAIL_COM_USER);
+		if (user == null) throw new NoCommissionUserException();
+		return user.getId();
 	}
 
 	private User registerUser(User user)

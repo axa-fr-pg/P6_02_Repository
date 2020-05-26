@@ -31,6 +31,7 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 955065855418183406L;
 
 	public static final String ROLE_APP_USER = "ROLE_APP_USER";
+	public static final String EMAIL_COM_USER = "EMAIL_FOR_COMMISSION_USER";
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

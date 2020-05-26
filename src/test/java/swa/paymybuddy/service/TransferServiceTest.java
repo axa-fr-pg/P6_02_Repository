@@ -3,6 +3,9 @@ package swa.paymybuddy.service;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -34,10 +37,11 @@ public class TransferServiceTest {
 	private Account accountInt1 = new Account(u1, Account.TYPE_INTERNAL, new BigDecimal(11111.1), "bic_int_1", "iban_int_1");
 	private Account accountInt2 = new Account(u2, Account.TYPE_INTERNAL, new BigDecimal(22.22), "bic_int_2", "iban_int_2");
 	private Account accountExt1 = new Account(u1, Account.TYPE_EXTERNAL, new BigDecimal(333.22), "bic_ext_1", "iban_ext_1");
-	private BigDecimal amount = new BigDecimal(123.45);
+	private BigDecimal amount = new BigDecimal(200.00);
 	private Transfer tInt21 = new Transfer(u2.getId(), u1.getId(), 0, "internal transfer from user 2 to user 1", amount); 
 	private Transfer tFromOutside1 = new Transfer(accountInt1, accountExt1, null, 0, "transfer from outside user 1", amount); 
-	private Transfer tToOutside1 = new Transfer(accountExt1, accountInt1, null, 0, "transfer to outside user 1", amount); 
+	private Transfer tToOutside1 = new Transfer(accountExt1, accountInt1, null, 0, "transfer to outside user 1", amount);
+	private List<Transfer> tList = Arrays.asList(tInt21, tFromOutside1, tToOutside1);
 
 	@Autowired
 	TransferService transferService;
@@ -92,12 +96,14 @@ public class TransferServiceTest {
 	void givenExternalAccount_transferFromOutside_createsTransfer() throws Exception
 	{
 		// GIVEN
+		BigDecimal commission = amount.divide(new BigDecimal(200.0));
 		when(userService.getAuthenticatedUser()).thenReturn(u1);
 		when(accountService.operateTransfer(any(Account.class), eq(amount), eq(false))).thenReturn(accountExt1);
 		when(accountService.operateTransfer(any(Account.class), eq(amount), eq(true))).thenReturn(accountInt1);
-		when(transferRepository.save(eq(tFromOutside1))).thenReturn(tFromOutside1);
+		when(accountService.operateTransfer(any(Account.class), eq(commission), eq(false))).thenReturn(accountInt2);
+		when(transferRepository.save(any(Transfer.class))).thenReturn(tFromOutside1);
 		// WHEN
-		Transfer t = transferService.transferFromOutside(tFromOutside1);
+		Transfer t = transferService.transferFromOutside(tFromOutside1); 
 		// THEN
 		assertNotNull(t);
 		assertEquals(u1.getId(), t.getAccountDebit().getUserId().getId());
@@ -128,5 +134,18 @@ public class TransferServiceTest {
 		assertEquals(tToOutside1.getTransferId(), t.getTransferId());
 		assertEquals(tToOutside1.getDescription(), t.getDescription());
 		assertEquals(tToOutside1.getAmount(), t.getAmount());	
+	}
+	
+	@Test
+	void givenTransfers_getMyTransferList_returnsCorrectElements() throws Exception
+	{
+		// GIVEN
+		when(userService.getAuthenticatedUser()).thenReturn(u1);
+		when(transferRepository.findAll()).thenReturn(tList);
+		// WHEN
+		ArrayList<Transfer> myTransferList= transferService.getMyTransferList();
+		// THEN
+		assertNotNull(myTransferList);
+		assertEquals(3, myTransferList.size());
 	}
 }

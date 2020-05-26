@@ -3,6 +3,8 @@ package swa.paymybuddy.integration;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,6 +12,7 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Service;
 import org.springframework.test.web.servlet.MockMvc;
 
+import swa.paymybuddy.model.Account;
 import swa.paymybuddy.model.User;
 import swa.paymybuddy.repository.AccountRepository;
 import swa.paymybuddy.repository.PersistentLoginsRepository;
@@ -57,5 +60,11 @@ public class TestService
 				.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
 		SecurityContextHolder.setContext(securityContext);
 		return myUser;
+	}
+	
+	public void createCommissionUserAndAccount() 
+	{
+        User u = userRepository.save(new User(0, 0, User.EMAIL_COM_USER, ""));
+        accountRepository.save(new Account(u, Account.TYPE_INTERNAL, new BigDecimal(0), "", ""));
 	}
 }
