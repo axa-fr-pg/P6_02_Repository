@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 import swa.paymybuddy.model.Account;
 import swa.paymybuddy.model.Relation;
@@ -17,7 +16,7 @@ import swa.paymybuddy.repository.TransferRepository;
 import swa.paymybuddy.repository.UserRepository;
 
 @Service
-public class RunnerServiceImpl implements CommandLineRunner {
+public class RunnerServiceImpl implements RunnerService {
 
     private static final Logger logger = LoggerFactory.getLogger(RunnerServiceImpl.class);
 
@@ -59,19 +58,19 @@ public class RunnerServiceImpl implements CommandLineRunner {
 		persistentLoginsRepository.deleteAllInBatch();
 		userRepository.deleteAllInBatch();
 		
-        User u1 = userRepository.save(new User(0, 0, "UserA", 
-        		"$2y$10$Tizt8PWuzXwth.UGEU2PHewSaJP4PjCXxygL3SgCpdmgVHQy/DZX6")); //PassA
-        User u2 = userRepository.save(new User(0, 0, "UserB", 
-        		"$2y$10$w6WCcjlYZLJI9MmDNZN.HuAS9/vIm/SoRghEI5ia6UKKfO7.4r04C")); //PassB
+        User u1 = userRepository.save(new User(0, 0, "philippe.gey@axa.fr", 
+        		"$2y$10$MNyoW.RghhyEhWEV4Ic61OX6unMMjs2L.PsUQ8MGSmRfUPCLAaZ4W")); // Password is axa
+        User u2 = userRepository.save(new User(0, 0, "my.wife@home.fr", 
+        		"$2y$10$3oN0znyPYd3ulsyL5r6PCuKsDCjuUl1Y.cnZExjesp2PAnVS5uPrC")); // Password is home
         
-        accountRepository.save(new Account(u1.getId(), Account.TYPE_INTERNAL));
-        accountRepository.save(new Account(u2.getId(), Account.TYPE_INTERNAL));
+        Account aInt1 = accountRepository.save(new Account(u1, Account.TYPE_INTERNAL, new BigDecimal(100000), "", ""));
+        Account aInt2 = accountRepository.save(new Account(u2, Account.TYPE_INTERNAL, new BigDecimal( 50000), "", ""));
+        Account aExt1 = accountRepository.save(new Account(u1, Account.TYPE_EXTERNAL, new BigDecimal(900000), "my_bic", "this_is_my_iban"));
         
         relationRepository.save(new Relation(u1, u2));
+        relationRepository.save(new Relation(u2, u1));
         
-        transferRepository.save(new Transfer(u1.getId(), u2.getId(), Account.TYPE_INTERNAL, "my personal transfer comment A", new BigDecimal(0)));    
-        transferRepository.save(new Transfer(u1.getId(), u2.getId(), Account.TYPE_INTERNAL, "my personal transfer comment B", new BigDecimal(0)));    
-        transferRepository.save(new Transfer(u1.getId(), u2.getId(), Account.TYPE_INTERNAL, "my personal transfer comment C", new BigDecimal(0)));    
-        transferRepository.save(new Transfer(u1.getId(), u2.getId(), Account.TYPE_INTERNAL, "my personal transfer comment D", new BigDecimal(0)));    
+        transferRepository.save(new Transfer(aInt1, aExt1, null, 0, "Let's bring some money into the application", new BigDecimal(150000)));
+        transferRepository.save(new Transfer(aInt2, aInt1, null, 0, "My wife also needs money to start playing with it", new BigDecimal(50000)));
     }
 }
