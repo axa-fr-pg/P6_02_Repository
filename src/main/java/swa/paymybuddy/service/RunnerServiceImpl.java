@@ -1,25 +1,15 @@
 package swa.paymybuddy.service;
 
-import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import swa.paymybuddy.model.Account;
-import swa.paymybuddy.model.Relation;
-import swa.paymybuddy.model.Transfer;
-import swa.paymybuddy.model.User;
-import swa.paymybuddy.repository.AccountRepository;
-import swa.paymybuddy.repository.PersistentLoginsRepository;
-import swa.paymybuddy.repository.RelationRepository;
-import swa.paymybuddy.repository.TransferRepository;
-import swa.paymybuddy.repository.UserRepository;
 
 @Service
 public class RunnerServiceImpl implements RunnerService {
 
     private static final Logger logger = LoggerFactory.getLogger(RunnerServiceImpl.class);
 
+    /*
 	@Autowired
     private UserRepository userRepository;
 	
@@ -34,6 +24,7 @@ public class RunnerServiceImpl implements RunnerService {
 
 	@Autowired
     private PersistentLoginsRepository persistentLoginsRepository;
+    */
 
 	private boolean useTestDatabase() {
     	StackTraceElement[] trace = Thread.currentThread().getStackTrace();
