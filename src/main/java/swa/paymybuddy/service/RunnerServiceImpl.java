@@ -51,7 +51,8 @@ public class RunnerServiceImpl implements RunnerService {
 		
 		/*
 		 * Initialize production database with some values
-		 */
+		 * (replaced with SQL script initialization after successful JPA database generation)
+		 *
 		transferRepository.deleteAllInBatch();
 		accountRepository.deleteAllInBatch();
 		relationRepository.deleteAllInBatch();
@@ -72,8 +73,10 @@ public class RunnerServiceImpl implements RunnerService {
         relationRepository.save(new Relation(u1, u2));
         relationRepository.save(new Relation(u2, u1));
         
-        Transfer t1 = transferRepository.save(new Transfer(aInt1, aExt1, null, 0, "Loading my money", new BigDecimal(150000)));
-//        transferRepository.save(new Transfer(aInt0, aInt1, null, 0, "Commission for transfer", new BigDecimal(750)));        
-        Transfer t2 = transferRepository.save(new Transfer(aInt2, aInt1, null, 0, "Sharing with my wife", new BigDecimal(50000)));
+        transferRepository.save(new Transfer(aInt1, aExt1, null, 0, "Loading my money", new BigDecimal(150000)));
+        transferRepository.save(new Transfer(aInt0, aInt1, null, 0, "Loading my money", new BigDecimal(750)));        
+        transferRepository.save(new Transfer(aInt2, aInt1, null, 0, "Sharing with my wife", new BigDecimal(50000)));
+        transferRepository.save(new Transfer(aInt0, aInt1, null, 0, "Sharing with my wife", new BigDecimal(250)));
+        */
     }
 }
