@@ -20,7 +20,7 @@ public class UserSecurityDetails implements UserDetailsService {
 	@Autowired
 	private UserService userService;
 
-	@Override
+	@Override // This method is called by spring security to get user name and password
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
 		if (email.trim().isEmpty()) {
@@ -36,6 +36,7 @@ public class UserSecurityDetails implements UserDetailsService {
 		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), getGrantedAuthorities(user));
 	}
 
+	// In the first release we only manage a standard USER role
 	private List<GrantedAuthority> getGrantedAuthorities(User user) {
 		
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();

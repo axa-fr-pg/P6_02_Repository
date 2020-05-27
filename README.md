@@ -100,6 +100,6 @@ The user and account types have been defined as tiny integer, because they can o
 
 # Database UML diagram
 
-![Text](/resources/database_uml_diagram.jpg?raw=true "Optional Title")
+![](https://github.com/philippegeyaxa/P6_02_Repository/blob/develop/resources/database_uml_diagram.jpg?raw=true)
 
 
