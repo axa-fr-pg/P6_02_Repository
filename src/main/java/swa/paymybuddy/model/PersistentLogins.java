@@ -26,7 +26,6 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class PersistentLogins {
 
 	@Id
@@ -51,5 +50,13 @@ public class PersistentLogins {
 	public void setLastUsed(Date l)
 	{
 		lastUsed = (Date) l.clone();
+	}
+	
+	public PersistentLogins(String series, User username, String token, Date lastUsed) 
+	{
+		this.series = series;
+		this.username = new User(username.getId(), username.getType(), username.getEmail(), username.getPassword());
+		this.token = token;
+		this.lastUsed = (Date) lastUsed.clone();
 	}
 }

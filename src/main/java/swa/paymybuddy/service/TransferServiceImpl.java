@@ -63,8 +63,7 @@ public class TransferServiceImpl implements TransferService {
 		BigDecimal comAmount = calculateCommission(amount);
 		transfer.setAccountCredit(accountService.operateTransfer(comAccount, comAmount, true));
 		transfer.setAccountDebit(accountService.operateTransfer(myAccount, comAmount, false));
-		Transfer comTransfer = transferRepository.save(transfer);
-		if (comTransfer == null) return null;
+		transferRepository.save(transfer);
 		// Operate the transfer then
 		transfer.setAccountCredit(accountService.operateTransfer(myFriendAccount, amount, true));
 		transfer.setAccountDebit(accountService.operateTransfer(myAccount, amount, false));
@@ -85,15 +84,13 @@ public class TransferServiceImpl implements TransferService {
 		transfer.setAccountCredit(accountService.operateTransfer(myInternalAccount, amount, true));
 		transfer.setAccountDebit(accountService.operateTransfer(myExternalAccount, amount, false));
 		transfer = transferRepository.save(transfer);
-		if (transfer == null) return null;
 		// Transfer the commission then
 		BigDecimal comAmount = calculateCommission(amount);
 		Transfer comTransfer = new Transfer(
 				accountService.operateTransfer(comAccount, comAmount, true), 
 				accountService.operateTransfer(myInternalAccount, comAmount, false),
 				null, 0, transfer.getDescription(), comAmount);
-		comTransfer = transferRepository.save(comTransfer);
-		if (comTransfer == null) return null;
+		transferRepository.save(comTransfer);
 		return transfer;
 	}
 	
@@ -111,8 +108,7 @@ public class TransferServiceImpl implements TransferService {
 		BigDecimal comAmount = calculateCommission(amount);
 		transfer.setAccountCredit(accountService.operateTransfer(comAccount, comAmount, true));
 		transfer.setAccountDebit(accountService.operateTransfer(myInternalAccount, calculateCommission(amount), false));
-		Transfer comTransfer = transferRepository.save(transfer);
-		if (comTransfer == null) return null;
+		transferRepository.save(transfer);
 		// Operate the transfer then
 		transfer.setAccountCredit(accountService.operateTransfer(myExternalAccount, amount, true));
 		transfer.setAccountDebit(accountService.operateTransfer(myInternalAccount, amount, false));
