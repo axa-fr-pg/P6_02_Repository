@@ -41,10 +41,10 @@ public class Account {
 	@Column(columnDefinition = "DECIMAL(9,3)", nullable = false)
 	BigDecimal balance;
 
-	@Column(length = 11, nullable = false)
+	@Column(length = 11, nullable = true)
 	String bic; // only for external accounts
 
-	@Column(length = 34, nullable = false)
+	@Column(length = 34, nullable = true)
 	String iban; // only for external accounts
 
 	public Account(int userId, int accountType) // to create an empty account

@@ -20,16 +20,16 @@ CREATE TABLE `account` (
   `type` tinyint NOT NULL,
   `user_id` int NOT NULL,
   `balance` decimal(9,3) NOT NULL,
-  `bic` varchar(11) NOT NULL,
-  `iban` varchar(34) NOT NULL,
+  `bic` varchar(11) DEFAULT  NULL,
+  `iban` varchar(34) DEFAULT NULL,
   PRIMARY KEY (`type`,`user_id`),
   KEY `FK_user_id` (`user_id`),
   CONSTRAINT `FK_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 );
 INSERT INTO `account` VALUES 
-	(0,7,250.000,'',''),
-	(0,8,100000.000,'',''),
-	(0,9,50000.000,'',''),
+	(0,7,1000.000,NULL,NULL),
+	(0,8,100000.000,NULL,NULL),
+	(0,9,50000.000,NULL,NULL),
 	(1,8,900000.000,'my_bic','this_is_my_iban');
 
 CREATE TABLE `persistent_logins` (
@@ -99,8 +99,8 @@ CREATE TABLE `account` (
   `type` tinyint NOT NULL,
   `user_id` int NOT NULL,
   `balance` decimal(9,3) NOT NULL,
-  `bic` varchar(11) NOT NULL,
-  `iban` varchar(34) NOT NULL,
+  `bic` varchar(11) DEFAULT  NULL,
+  `iban` varchar(34) DEFAULT NULL,
   PRIMARY KEY (`type`,`user_id`),
   KEY `FK_user_id` (`user_id`),
   CONSTRAINT `FK_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)

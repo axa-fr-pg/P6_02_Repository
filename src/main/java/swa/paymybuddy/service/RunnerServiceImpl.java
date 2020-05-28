@@ -56,9 +56,9 @@ public class RunnerServiceImpl implements RunnerService {
         User u2 = userRepository.save(new User(0, 0, "my.wife@home.fr", 
         		"$2y$10$3oN0znyPYd3ulsyL5r6PCuKsDCjuUl1Y.cnZExjesp2PAnVS5uPrC")); // Password is home
         
-        Account aInt0 = accountRepository.save(new Account(u0, Account.TYPE_INTERNAL, new BigDecimal(250), "", ""));
-        Account aInt1 = accountRepository.save(new Account(u1, Account.TYPE_INTERNAL, new BigDecimal(100000), "", ""));
-        Account aInt2 = accountRepository.save(new Account(u2, Account.TYPE_INTERNAL, new BigDecimal( 50000), "", ""));
+        Account aInt0 = accountRepository.save(new Account(u0, Account.TYPE_INTERNAL, new BigDecimal(1000), null, null));
+        Account aInt1 = accountRepository.save(new Account(u1, Account.TYPE_INTERNAL, new BigDecimal(100000), null, null));
+        Account aInt2 = accountRepository.save(new Account(u2, Account.TYPE_INTERNAL, new BigDecimal( 50000), null, null));
         Account aExt1 = accountRepository.save(new Account(u1, Account.TYPE_EXTERNAL, new BigDecimal(900000), "my_bic", "this_is_my_iban"));
         
         relationRepository.save(new Relation(u1, u2));

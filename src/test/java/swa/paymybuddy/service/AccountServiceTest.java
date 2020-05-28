@@ -19,8 +19,8 @@ public class AccountServiceTest
 {
 	private User u1 = new User(1, 11, "email_1", "password_1"); // my id
 	private User u2 = new User(2, 12, "email_2", "password_2"); // my friend's id
-	private Account accountInt1 = new Account(u1, Account.TYPE_INTERNAL, new BigDecimal(11111.1), "bic_1", "iban_1");
-	private Account accountInt2 = new Account(u2, Account.TYPE_INTERNAL, new BigDecimal(22.22), "bic_2", "iban_2");
+	private Account accountInt1 = new Account(u1, Account.TYPE_INTERNAL, new BigDecimal(11111.1), null, null);
+	private Account accountInt2 = new Account(u2, Account.TYPE_INTERNAL, new BigDecimal(22.22), null, null);
 	private BigDecimal amount1 = new BigDecimal(123.45);
 	private BigDecimal amount2 = new BigDecimal(-2345.678);
 			
