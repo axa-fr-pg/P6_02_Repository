@@ -102,4 +102,11 @@ The user and account types have been defined as tiny integer, because they can o
 
 ![](https://github.com/philippegeyaxa/P6_02_Repository/blob/develop/resources/database_uml_diagram.jpg?raw=true)
 
+# Deployment
+
+## Prerequisites
+Our application is designed to work optimally with the following configuration : java 1.8, mySQL 8.0, maven 3.6, spring boot 2, jpa (version managed by spring boot), security (version managed by spring boot).
+
+## Installation
+We plan to develop an automated installation tool in a future release. In the meanwhile, you can install our application with the following steps: 1/ Download this GitHub repository. 2/ Import the pom.xml file as a maven project in your favorite IDE (it was designed under Eclipse 2019-12). 3/ Open a terminal window and launch installation with "mvn install".
 
